@@ -1,0 +1,1174 @@
+<!doctype html>
+<html lang="vi">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>OneBee HybridXD Nhà nước</title>
+<meta name="description" content="Hệ thống liên thông quản lý Đầu tư công và Đô thị số: Lark Suite kết hợp GIS, BIM, Meegle cho Sở chuyên ngành, Ban QLDA và UBND cấp Xã.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: văn bản hành chính số — nền giấy công vụ, khung kẻ mảnh, tông xanh đậm chính thống; mỗi khối là một "mục" có số thứ tự.
+   Mã màu cố định: XANH ĐẬM = Lark (quy trình hành chính, phê duyệt, lưu trữ) · NÂU CAM = Hệ thống kỹ thuật (GIS, BIM, Meegle) */
+:root{
+  --paper:#F3F5F8; --paper-2:#E8EDF3; --card:#FFFFFF; --ink:#0F1C2E; --ink-2:#46566B; --line:#D2DAE4;
+  --gov:#0B3A75; --gov-ink:#0B3A75; --gov-soft:#E3EBF6; --on-gov:#FFFFFF;
+  --tech:#B45309; --tech-ink:#92400E; --tech-soft:#FBEFE0; --on-tech:#FFFFFF;
+  --ok:#13784A; --ok-soft:#DFF2E8; --bad:#B42318; --bad-soft:#FBE6E3; --warn:#A15C00; --warn-soft:#FDF1D8;
+  --c-act:#2A5CB0; --c-plan:#B45309;
+  --f-display:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-body:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"Cascadia Mono",Consolas,monospace;
+  --shadow:0 1px 2px rgba(15,28,46,.06),0 6px 22px rgba(15,28,46,.06);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0B111A; --paper-2:#111926; --card:#152031; --ink:#E3E9F1; --ink-2:#9BA9BB; --line:#25344A;
+  --gov:#7FA7E8; --gov-ink:#9CBBF0; --gov-soft:#142846; --on-gov:#08162E;
+  --tech:#E08A3C; --tech-ink:#F0A35E; --tech-soft:#35220F; --on-tech:#241203;
+  --ok:#4CC38A; --ok-soft:#12301F; --bad:#FF7B6B; --bad-soft:#3A1915; --warn:#F2B44C; --warn-soft:#33260C;
+  --c-act:#5B88D6; --c-plan:#C27320;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 22px rgba(0,0,0,.25); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0B111A; --paper-2:#111926; --card:#152031; --ink:#E3E9F1; --ink-2:#9BA9BB; --line:#25344A;
+  --gov:#7FA7E8; --gov-ink:#9CBBF0; --gov-soft:#142846; --on-gov:#08162E;
+  --tech:#E08A3C; --tech-ink:#F0A35E; --tech-soft:#35220F; --on-tech:#241203;
+  --ok:#4CC38A; --ok-soft:#12301F; --bad:#FF7B6B; --bad-soft:#3A1915; --warn:#F2B44C; --warn-soft:#33260C;
+  --c-act:#5B88D6; --c-plan:#C27320;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 22px rgba(0,0,0,.25); color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+img{max-width:100%}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 16px/1.6 var(--f-body);-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.22}
+p{margin:0}
+a{color:inherit}
+svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:20px}
+.mono{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+.gov-t{color:var(--gov-ink)} .tech-t{color:var(--tech-ink)}
+:focus-visible{outline:3px solid var(--gov);outline-offset:2px;border-radius:4px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:5px 10px;border-radius:999px;border:1px solid var(--line);background:var(--card)}
+.chip .i{width:15px;height:15px}
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:3px 9px;border-radius:5px;border:1px solid var(--ink);color:var(--ink);background:var(--card);letter-spacing:.01em}
+.tag .i{width:13px;height:13px}
+
+/* ---------- NAV ---------- */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--paper) 92%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:20px;height:62px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;text-decoration:none;letter-spacing:-.01em;line-height:1.1}
+.brand-mark{display:grid;grid-template-columns:1fr 1fr;width:26px;height:26px;border-radius:5px;overflow:hidden;flex:none}
+.brand-mark i:first-child{background:var(--tech)} .brand-mark i:last-child{background:var(--gov)}
+.brand small{display:block;font-size:11px;font-weight:600;color:var(--ink-2);letter-spacing:.04em}
+.nav-links{display:flex;gap:2px;margin:0 0 0 auto;list-style:none;padding:0}
+.nav-links a{display:block;padding:8px 10px;border-radius:7px;text-decoration:none;font-size:14px;font-weight:500;color:var(--ink-2)}
+.nav-links a:hover{background:var(--paper-2);color:var(--ink)}
+.nav-hot{font:700 14px var(--f-mono);color:var(--ink);text-decoration:none;white-space:nowrap;margin-left:10px}
+@media (max-width:1060px){.nav-links{display:none}.nav-hot{margin-left:auto}}
+@media (max-width:560px){.nav-hot{display:none}}
+
+.btn{display:inline-flex;align-items:center;gap:8px;min-height:46px;padding:0 20px;border-radius:8px;font:600 15px/1.2 var(--f-body);text-decoration:none;cursor:pointer;border:1.5px solid transparent;transition:background .2s,border-color .2s;text-align:left}
+.btn-primary{background:var(--gov);color:var(--on-gov)}
+.btn-primary:hover{background:color-mix(in srgb,var(--gov) 88%,var(--ink))}
+.btn-ghost{border-color:var(--ink-2);background:var(--card);color:var(--ink)}
+.btn-ghost:hover{border-color:var(--ink)}
+.nav .btn{min-height:40px;padding:0 14px;font-size:14px;margin-left:8px}
+@media (max-width:560px){.nav .btn{margin-left:auto}}
+.btn[disabled]{opacity:.6;cursor:progress}
+
+/* ---------- SECTIONS ---------- */
+section{padding-block:84px}
+.sec-head{display:grid;gap:12px;max-width:780px;margin-bottom:40px}
+.sec-head .eyebrow{display:flex;align-items:center;gap:10px;color:var(--ink-2)}
+.sec-head .eyebrow b{display:inline-grid;place-items:center;min-width:30px;height:24px;padding:0 6px;border-radius:4px;background:var(--gov);color:var(--on-gov);font-weight:700}
+.sec-head h2{font-size:clamp(27px,3.8vw,40px);font-weight:800;letter-spacing:-.02em}
+.sec-head p{color:var(--ink-2);font-size:17px;max-width:64ch}
+.alt{background:var(--paper-2)}
+
+/* ---------- HERO ---------- */
+.hero{padding-block:60px 64px;border-bottom:1px solid var(--line);background:linear-gradient(var(--card),var(--paper))}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:44px;align-items:center}
+@media (max-width:980px){.hero-grid{grid-template-columns:1fr}}
+.hero .kicker{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.hero h1{font-size:clamp(30px,4.2vw,48px);font-weight:800;letter-spacing:-.025em;line-height:1.12}
+.hero h1 span{color:var(--gov-ink)}
+.hero .lede{margin-top:18px;font-size:18px;color:var(--ink-2);max-width:54ch}
+.hero .ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:26px;font-size:13px;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.sw{width:14px;height:14px;border-radius:3px;display:inline-block;flex:none}
+.sw.t{background:var(--tech)} .sw.g{background:var(--gov)}
+
+/* hero tier diagram */
+.tiers{margin:0;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;box-shadow:var(--shadow);display:grid;gap:0}
+.tier-band{border-radius:10px;padding:16px;display:grid;gap:12px}
+.tier-band.g{background:var(--gov-soft);border:1px solid color-mix(in srgb,var(--gov) 35%,transparent)}
+.tier-band.t{background:var(--tech-soft);border:1px solid color-mix(in srgb,var(--tech) 35%,transparent)}
+.tier-cap{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.tier-band.g .tier-cap{color:var(--gov-ink)} .tier-band.t .tier-cap{color:var(--tech-ink)}
+.levels{display:grid;grid-template-columns:minmax(0,1fr) 22px minmax(0,1fr) 22px minmax(0,1fr);align-items:stretch}
+.lvl{background:var(--card);border-radius:8px;padding:10px;display:grid;gap:4px;align-content:start;border:1px solid var(--line)}
+.lvl .ico{display:grid;place-items:center;width:32px;height:32px;border-radius:7px;background:var(--gov);color:var(--on-gov)}
+.lvl .ico .i{width:17px;height:17px}
+.lvl b{font-size:13.5px;line-height:1.3}
+.lvl small{font-size:12px;color:var(--ink-2);line-height:1.35}
+.lv-arr{display:grid;place-items:center;color:var(--gov-ink)}
+.lv-arr .i{width:16px;height:16px}
+.techs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.tc{display:flex;gap:8px;align-items:center;background:var(--card);border-radius:8px;padding:9px;border:1px solid var(--line);min-width:0}
+.tc .ico{display:grid;place-items:center;width:30px;height:30px;border-radius:7px;background:var(--tech);color:var(--on-tech);flex:none}
+.tc .ico .i{width:16px;height:16px}
+.tc b{display:block;font-size:13.5px}
+.tc small{display:block;font-size:11.5px;color:var(--ink-2);line-height:1.3}
+.api-link{display:flex;align-items:center;justify-content:center;gap:10px;padding:8px 0;color:var(--ink-2)}
+.api-link .rail{flex:1;max-width:70px;border-top:2px dashed currentColor}
+.api-link span{font:700 11px var(--f-mono);padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);display:inline-flex;align-items:center;gap:6px}
+.api-link span .i{width:13px;height:13px}
+@media (max-width:620px){
+  .levels{grid-template-columns:1fr;gap:6px}
+  .lv-arr{transform:rotate(90deg);height:18px}
+  .techs{grid-template-columns:1fr}
+}
+
+/* ---------- COMMAND TOWER ---------- */
+.tower{padding-block:56px}
+.tower-head{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:end;margin-bottom:20px}
+.tower-head h2{font-size:clamp(22px,2.8vw,28px);font-weight:800}
+.tower-head p{color:var(--ink-2);font-size:15px;margin-top:4px}
+.dash{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+.dash-bar{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;padding:12px 18px;border-bottom:1px solid var(--line);background:var(--paper)}
+.dash-bar b{font-size:14px}
+.dash-bar .mono{color:var(--ink-2)}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-bottom:1px solid var(--line)}
+@media (max-width:820px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi{padding:18px;display:grid;gap:4px;border-right:1px solid var(--line);position:relative;align-content:start}
+.kpi:last-child{border-right:0}
+@media (max-width:820px){.kpi:nth-child(2){border-right:0}.kpi:nth-child(-n+2){border-bottom:1px solid var(--line)}}
+.kpi .lb{font-size:13px;color:var(--ink-2);font-weight:600}
+.kpi .v{font:800 34px/1.05 var(--f-display);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.kpi .s{font-size:12.5px;color:var(--ink-2)}
+.kpi .s b{font-weight:700}
+.kpi .flow-n{position:absolute;right:14px;top:14px;color:var(--ink-2);opacity:.6}
+.kpi .flow-n .i{width:16px;height:16px}
+.meter{height:6px;border-radius:3px;background:var(--paper-2);overflow:hidden;margin-top:4px}
+.meter i{display:block;height:100%;border-radius:3px}
+.dash-body{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr)}
+@media (max-width:900px){.dash-body{grid-template-columns:1fr}}
+.chart-box{padding:18px;border-right:1px solid var(--line);min-width:0}
+@media (max-width:900px){.chart-box{border-right:0;border-bottom:1px solid var(--line)}}
+.chart-top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;align-items:baseline;margin-bottom:8px}
+.chart-top b{font-size:14.5px}
+.chart-legend{display:flex;gap:14px;font-size:12.5px;color:var(--ink-2)}
+.chart-legend span{display:inline-flex;align-items:center;gap:6px}
+.chart-legend i{display:inline-block;width:18px;height:0;border-top:2px solid}
+.chart-legend i.a{border-color:var(--c-act)} .chart-legend i.p{border-color:var(--c-plan);border-top-style:dashed}
+.chart-wrap{position:relative}
+.chart-wrap svg{display:block;width:100%;height:auto}
+.chart-wrap .grid line{stroke:var(--line);stroke-width:1}
+.chart-wrap text{fill:var(--ink-2);font:500 11px var(--f-body)}
+.chart-wrap .lbl-end{fill:var(--ink);font-weight:700;font-size:11.5px}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--paper);border-radius:7px;padding:8px 10px;font-size:12.5px;line-height:1.45;white-space:nowrap;transform:translate(-50%,-110%);box-shadow:var(--shadow)}
+.tip b{font-variant-numeric:tabular-nums}
+.tip .k{display:inline-block;width:10px;height:2px;vertical-align:middle;margin-right:6px}
+.queue{padding:18px;display:grid;gap:10px;align-content:start}
+.queue h3{font-size:14.5px}
+.qi{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;padding:10px;border-radius:8px;background:var(--paper);border:1px solid var(--line)}
+.qi .st{display:grid;place-items:center;width:28px;height:28px;border-radius:6px}
+.qi .st .i{width:15px;height:15px}
+.qi.w .st{background:var(--warn-soft);color:var(--warn)} .qi.b .st{background:var(--bad-soft);color:var(--bad)} .qi.o .st{background:var(--ok-soft);color:var(--ok)}
+.qi b{display:block;font-size:13px;line-height:1.35}
+.qi small{display:block;font-size:12px;color:var(--ink-2);line-height:1.4}
+.qi .pill{display:inline-block;margin-top:4px;font-size:11.5px;font-weight:700;padding:1px 7px;border-radius:4px}
+.qi.w .pill{background:var(--warn-soft);color:var(--warn)} .qi.b .pill{background:var(--bad-soft);color:var(--bad)} .qi.o .pill{background:var(--ok-soft);color:var(--ok)}
+.dash-note{padding:10px 18px;border-top:1px solid var(--line);font-size:12.5px;color:var(--ink-2)}
+.sr-table{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* ---------- 01 PAIN ---------- */
+.pains-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+@media (max-width:900px){.pains-grid{grid-template-columns:1fr}}
+.pain{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px;display:grid;gap:14px;align-content:start}
+.pain-h{display:flex;align-items:center;gap:12px}
+.pain-h .ico{display:grid;place-items:center;width:42px;height:42px;border-radius:9px;background:var(--gov-soft);color:var(--gov-ink)}
+.pain-h h3{font-size:18px}
+.pain-h small{display:block;color:var(--ink-2);font-size:13px;font-weight:500}
+.pains{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.pains li{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.45}
+.pains li .i{color:var(--bad);width:18px;height:18px;margin-top:2px}
+.flows{margin-top:32px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}
+@media (max-width:900px){.flows{grid-template-columns:1fr}}
+.fl{border-radius:12px;padding:20px;border:1px solid var(--line);background:var(--card)}
+.fl h4{display:flex;align-items:center;gap:8px;font-size:15px;margin-bottom:14px}
+.fl.bad h4{color:var(--bad)} .fl.good h4{color:var(--ok)}
+.chain{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.node{padding:7px 11px;border-radius:7px;font-size:14px;font-weight:600;background:var(--paper-2);border:1px solid var(--line)}
+.node.g{background:var(--gov-soft);border-color:color-mix(in srgb,var(--gov) 35%,transparent)}
+.node.x{border-style:dashed;color:var(--ink-2);font-weight:500}
+.chain .arr{color:var(--ink-2);font-family:var(--f-mono);font-size:13px}
+.chain .arr.broken{color:var(--bad)}
+.fl .note{margin-top:12px;font-size:14px;color:var(--ink-2)}
+
+/* ---------- 02 ARCHITECTURE ---------- */
+.arch{display:grid;max-width:1000px;margin:0 auto}
+.layer{border-radius:12px;padding:22px;display:grid;grid-template-columns:230px minmax(0,1fr);gap:22px;align-items:center}
+@media (max-width:780px){.layer{grid-template-columns:1fr;gap:14px}}
+.layer.g{background:var(--gov-soft);border:1.5px solid color-mix(in srgb,var(--gov) 40%,transparent)}
+.layer.t{background:var(--tech-soft);border:1.5px solid color-mix(in srgb,var(--tech) 40%,transparent)}
+.layer-id .lt{display:inline-block;padding:3px 8px;border-radius:4px;font-weight:700;margin-bottom:8px}
+.layer.g .lt{background:var(--gov);color:var(--on-gov)} .layer.t .lt{background:var(--tech);color:var(--on-tech)}
+.layer-id h3{font-size:21px;font-weight:800}
+.layer-id p{font-size:14px;color:var(--ink-2);margin-top:6px}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.tiles.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:900px){.tiles,.tiles.three{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:480px){.tiles,.tiles.three{grid-template-columns:1fr}}
+.tile{background:var(--card);border-radius:9px;padding:14px;display:grid;gap:6px;align-content:start;border:1px solid var(--line)}
+.tile .ico{display:grid;place-items:center;width:36px;height:36px;border-radius:8px}
+.layer.g .tile .ico{background:var(--gov-soft);color:var(--gov-ink)} .layer.t .tile .ico{background:var(--tech-soft);color:var(--tech-ink)}
+.tile b{font-size:14.5px}
+.tile span{font-size:13px;color:var(--ink-2);line-height:1.45}
+.bridge{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:6px 22px 6px 274px}
+@media (max-width:780px){.bridge{padding-inline:12px}}
+.bridge div{display:grid;justify-items:center;gap:4px;padding-block:8px;color:var(--ink-2)}
+.bridge svg.up{width:22px;height:40px}
+.bridge span{font-size:12.5px;font-weight:600;text-align:center;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 10px;color:var(--ink)}
+
+.knots{margin-top:44px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
+@media (max-width:980px){.knots{grid-template-columns:1fr}}
+.knot{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px;display:grid;gap:16px;align-content:start}
+.knot-h .mono{color:var(--bad)}
+.knot-h h3{font-size:19px;margin-top:6px}
+.knot-h p{font-size:14.5px;color:var(--ink-2);margin-top:6px}
+.knot ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.knot li{display:flex;gap:9px;font-size:14.5px;line-height:1.45}
+.knot li .i{color:var(--ok);width:17px;height:17px;margin-top:2px}
+
+.appr{border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.appr-h{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center;padding:10px 14px;background:var(--gov);color:var(--on-gov)}
+.appr-h b{font-size:13.5px}
+.appr-h span{font:700 11px var(--f-mono)}
+.appr-src{padding:10px 14px;font-size:13px;border-bottom:1px solid var(--line);display:flex;gap:8px;align-items:center}
+.appr-src .i{color:var(--gov-ink);width:16px;height:16px}
+.par{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:12px 14px;position:relative}
+@media (max-width:520px){.par{grid-template-columns:1fr}}
+.par-lbl{grid-column:1/-1;font:700 11px var(--f-mono);color:var(--ink-2);letter-spacing:.05em}
+.pa{border-radius:8px;padding:10px;border:1px solid var(--line);display:grid;gap:4px;font-size:12.5px}
+.pa b{font-size:13px;line-height:1.3}
+.pa .s{display:flex;align-items:center;gap:5px;font-weight:700}
+.pa .s .i{width:14px;height:14px}
+.pa.ok{background:var(--ok-soft);border-color:transparent} .pa.ok .s{color:var(--ok)}
+.pa.wait{background:var(--warn-soft);border-color:color-mix(in srgb,var(--warn) 50%,transparent)} .pa.wait .s{color:var(--warn)}
+.bot{margin:0 14px 14px;padding:10px 12px;border-radius:8px;background:var(--paper);border:1px solid var(--line);font-size:12.5px;display:flex;gap:8px;align-items:flex-start}
+.bot .i{width:16px;height:16px;color:var(--warn);margin-top:1px}
+
+.gis{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;align-items:start}
+.gis-src{grid-column:1/-1;justify-self:center;display:grid;justify-items:center;gap:4px;padding:12px 16px;border-radius:10px;background:var(--tech-soft);border:1px solid color-mix(in srgb,var(--tech) 40%,transparent);text-align:center}
+.gis-src b{font-size:14px}
+.gis-src small{font-size:12px;color:var(--ink-2)}
+.gis-arrows{grid-column:1/-1;display:block;width:100%;height:36px;color:var(--ink-2)}
+.screen{border:1px solid var(--line);border-radius:9px;background:var(--card);overflow:hidden}
+.screen.tab{border-width:6px;border-color:var(--ink);border-radius:14px}
+.screen-h{padding:7px 10px;font-size:12px;font-weight:700;background:var(--paper);border-bottom:1px solid var(--line);display:flex;gap:6px;align-items:center}
+.screen-h .i{width:14px;height:14px}
+.screen svg{display:block;width:100%;height:auto;background:var(--paper-2)}
+.screen .meta{padding:7px 10px;font:600 11.5px var(--f-mono);color:var(--ink);display:grid;gap:2px}
+.screen .meta span{color:var(--ok)}
+.parcel{fill:color-mix(in srgb,var(--tech) 22%,transparent);stroke:var(--tech);stroke-width:2}
+.parcel-n{fill:var(--line)}
+.road{stroke:var(--card);stroke-width:7}
+
+/* ---------- 03 ROLES ---------- */
+.role-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-bottom:28px}
+@media (max-width:900px){.role-cards{grid-template-columns:1fr}}
+.rc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px;display:grid;gap:12px;align-content:start}
+.rc-h{display:flex;align-items:center;gap:12px}
+.rc-h .ico{display:grid;place-items:center;width:44px;height:44px;border-radius:9px;background:var(--gov);color:var(--on-gov)}
+.rc-h h3{font-size:18px}
+.rc-h small{display:block;font-size:12.5px;color:var(--ink-2);font-weight:500}
+.rc .use{font-size:13px;font-weight:700;color:var(--ink-2)}
+.rc ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.rc li{display:flex;gap:9px;font-size:14.5px;line-height:1.45}
+.rc li .i{color:var(--gov-ink);width:17px;height:17px;margin-top:2px}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+table.t{width:100%;border-collapse:collapse;min-width:720px;font-size:15px}
+.t th,.t td{padding:13px 16px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.t tbody tr:last-child td,.t tbody tr:last-child th{border-bottom:0}
+.t thead th{font-size:13px;font-weight:700}
+.t thead th.g{background:var(--gov-soft);color:var(--gov-ink)} .t thead th.t{background:var(--tech-soft);color:var(--tech-ink)} .t thead th.n{background:var(--paper-2);color:var(--ink-2)}
+.t th[scope=row]{font-weight:700;white-space:nowrap}
+.t .mk{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;margin-right:8px;vertical-align:-4px}
+.t .mk .i{width:12px;height:12px;stroke-width:3}
+.t .mk.x{background:var(--bad-soft);color:var(--bad)} .t .mk.v{background:var(--ok-soft);color:var(--ok)}
+
+/* ---------- 04 MODULES ---------- */
+.mods{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:24px}
+@media (max-width:1000px){.mods{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.mods{grid-template-columns:1fr}}
+.mod{display:grid;gap:8px;align-content:start;text-align:left;padding:16px;border-radius:10px;border:1.5px solid var(--line);background:var(--card);cursor:pointer;font:inherit;color:inherit;transition:border-color .2s,background .2s}
+.mod:hover{border-color:var(--ink-2)}
+.mod[aria-selected=true]{border-color:var(--gov);background:var(--gov-soft)}
+.mod .n{font:700 12px var(--f-mono);color:var(--ink-2)}
+.mod .ico{display:grid;place-items:center;width:38px;height:38px;border-radius:8px;background:var(--gov);color:var(--on-gov)}
+.mod b{font-size:15px;line-height:1.3}
+.mod small{font-size:13px;color:var(--ink-2);line-height:1.4}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:26px;display:grid;gap:22px;scroll-margin-top:80px}
+@media (max-width:700px){.panel{padding:18px}}
+.panel-h{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:start}
+@media (max-width:760px){.panel-h{grid-template-columns:1fr}}
+.panel-h h3{font-size:clamp(21px,2.5vw,27px);font-weight:800;letter-spacing:-.01em}
+.panel-h .who{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+@media (max-width:760px){.panel-h .who{justify-content:flex-start}}
+.steps4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0}
+@media (max-width:980px){.steps4{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}}
+@media (max-width:560px){.steps4{grid-template-columns:1fr}}
+.st4{position:relative;display:grid;gap:10px;align-content:start;padding:16px;border-radius:10px;margin-right:22px}
+@media (max-width:980px){.st4{margin-right:0}}
+.st4:last-child{margin-right:0}
+.st4::after{content:"";position:absolute;right:-17px;top:30px;width:12px;height:12px;border-top:2px solid var(--ink-2);border-right:2px solid var(--ink-2);transform:rotate(45deg)}
+.st4:last-child::after{display:none}
+@media (max-width:980px){.st4::after{display:none}}
+.st4.t{background:var(--tech-soft)} .st4.g{background:var(--gov-soft)}
+.st4 .no{font:700 11px var(--f-mono);letter-spacing:.06em;color:var(--ink-2)}
+.st4 .tag{justify-self:start}
+.st4 .who4{font-size:12.5px;font-weight:700;color:var(--ink)}
+.st4 .tech4{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700}
+.st4.t .tech4{color:var(--tech-ink)} .st4.g .tech4{color:var(--gov-ink)}
+.st4 .tech4 .i{width:15px;height:15px}
+.st4 p{font-size:14px;line-height:1.5}
+.st4 .chainx{display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-size:11.5px;font-weight:600}
+.st4 .chainx span{padding:2px 6px;border-radius:4px;background:var(--card)}
+.st4 .chainx em{font-style:normal;color:var(--ink-2)}
+.st4 .chainx.par span{border:1px dashed var(--ink-2)}
+.panel-cta{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:center;border-top:1px solid var(--line);padding-top:20px}
+@media (max-width:860px){.panel-cta{grid-template-columns:1fr}}
+.panel-cta h4{font-size:17px}
+.panel-cta p{font-size:14.5px;color:var(--ink-2);margin-top:4px;max-width:70ch}
+.panel-cta .btns{display:grid;gap:8px;justify-items:stretch;max-width:420px}
+.panel-cta .btn{justify-content:center;text-align:center}
+
+/* ---------- 05 RESULTS ---------- */
+.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:26px;margin-bottom:36px}
+@media (max-width:820px){.metrics{grid-template-columns:1fr}}
+.metric{border-top:3px solid var(--gov);padding-top:16px;display:grid;gap:6px}
+.metric .num{font:800 clamp(44px,6vw,62px)/1 var(--f-display);letter-spacing:-.03em;color:var(--gov-ink);font-variant-numeric:tabular-nums}
+.metric p{font-size:15px;color:var(--ink-2);max-width:34ch}
+.audit{margin-top:32px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:26px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:24px}
+@media (max-width:900px){.audit{grid-template-columns:1fr}}
+.audit h3{font-size:20px}
+.audit p{font-size:15px;color:var(--ink-2);margin-top:8px}
+.log{list-style:none;margin:0;padding:0;border-left:2px solid var(--line);display:grid;gap:12px}
+.log li{position:relative;padding-left:18px;font-size:13.5px;line-height:1.45}
+.log li::before{content:"";position:absolute;left:-7px;top:5px;width:12px;height:12px;border-radius:50%;background:var(--card);border:2px solid var(--gov)}
+.log li.rej::before{border-color:var(--bad)}
+.log time{display:block;font:600 11.5px var(--f-mono);color:var(--ink-2)}
+.log b{font-weight:700}
+.log .q{display:block;color:var(--ink-2);font-style:italic}
+
+/* ---------- 06 PRICING ---------- */
+.cfgs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+@media (max-width:980px){.cfgs{grid-template-columns:1fr}}
+.cfg{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:24px;display:grid;grid-template-rows:auto auto auto 1fr auto;gap:16px}
+.cfg.hl{border:2px solid var(--gov)}
+.cfg-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.cfg-top .ico{display:grid;place-items:center;width:42px;height:42px;border-radius:9px;background:var(--gov-soft);color:var(--gov-ink)}
+.cfg-top .mono{color:var(--ink-2)}
+.cfg h3{font-size:19px;font-weight:800}
+.cfg .for{font-size:14px;color:var(--ink-2);margin-top:4px}
+.price{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+.price b{font:800 36px/1 var(--f-display);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.price span{font-size:14.5px;color:var(--ink-2)}
+.formula{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:12.5px;font-weight:700}
+.formula .p{padding:4px 9px;border-radius:6px}
+.formula .p.g{background:var(--gov-soft);color:var(--gov-ink)} .formula .p.t{background:var(--tech-soft);color:var(--tech-ink)}
+.formula em{font-style:normal;color:var(--ink-2)}
+.cfg .goal{font-size:14.5px;line-height:1.5}
+.cfg .btn{justify-content:center}
+
+.builder{margin-top:28px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:24px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:24px}
+@media (max-width:900px){.builder{grid-template-columns:1fr;padding:18px}}
+.builder h3{font-size:20px}
+.builder .sub{font-size:14.5px;color:var(--ink-2);margin-top:4px}
+.opts{display:grid;gap:16px;margin-top:18px}
+.opts fieldset{border:0;padding:0;margin:0;display:grid;gap:8px}
+.opts legend{font-size:13px;font-weight:700;color:var(--ink-2);margin-bottom:6px}
+.opt{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 12px;border-radius:8px;border:1.5px solid var(--line);cursor:pointer;background:var(--paper)}
+.opt:has(input:checked){border-color:var(--gov);background:var(--gov-soft)}
+.opt input{width:18px;height:18px;accent-color:var(--gov);margin:0}
+.opt span{font-size:14.5px;font-weight:600}
+.opt span small{display:block;font-weight:400;font-size:12.5px;color:var(--ink-2)}
+.opt b{font-variant-numeric:tabular-nums;font-size:14px;white-space:nowrap}
+.sum{display:grid;gap:14px;align-content:start;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:18px}
+.sum .lb{font-size:13px;font-weight:700;color:var(--ink-2)}
+.sum .total{font:800 40px/1 var(--f-display);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.sum ul{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:14px}
+.sum li{display:flex;justify-content:space-between;gap:10px}
+.sum li b{font-variant-numeric:tabular-nums}
+.sum .match{font-size:13.5px;padding:10px;border-radius:8px;background:var(--ok-soft)}
+.sum .btn{justify-content:center;text-align:center}
+.price-list{margin-top:28px}
+.pl td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
+.pl th.num{text-align:right}
+.pl .grp td{font-weight:700;font-size:13.5px;padding-block:9px}
+.pl .grp.g td{background:var(--gov-soft);color:var(--gov-ink)} .pl .grp.t td{background:var(--tech-soft);color:var(--tech-ink)}
+.pl td.unit{color:var(--ink-2);white-space:nowrap}
+
+/* ---------- CONTACT ---------- */
+.contact{background:var(--gov);color:var(--on-gov)}
+.contact-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:44px;align-items:start}
+@media (max-width:980px){.contact-grid{grid-template-columns:1fr}}
+.contact h2{font-size:clamp(26px,3.6vw,38px);font-weight:800;letter-spacing:-.02em}
+.contact .lede{margin-top:14px;font-size:17px;opacity:.85;max-width:50ch}
+.contact ul{list-style:none;padding:0;margin:26px 0 0;display:grid;gap:12px}
+.contact li{display:flex;gap:10px;align-items:center;font-size:15px}
+.hotline{margin-top:26px;display:inline-flex;align-items:center;gap:12px;padding:14px 18px;border-radius:10px;border:1px solid color-mix(in srgb,var(--on-gov) 30%,transparent)}
+.hotline b{font:700 20px var(--f-mono);letter-spacing:.02em}
+.hotline a{text-decoration:none}
+.hotline small{display:block;opacity:.75;font-size:12px}
+form.lead{background:var(--card);color:var(--ink);border-radius:12px;padding:26px;display:grid;gap:14px}
+@media (max-width:520px){form.lead{padding:18px}}
+.field{display:grid;gap:6px;min-width:0}
+.field label,.field legend{font-size:14px;font-weight:600}
+.field .opt-l{font-weight:400;color:var(--ink-2)}
+.field input,.field select{min-height:46px;padding:0 12px;border-radius:8px;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);font:400 16px var(--f-body);width:100%}
+.field select{cursor:pointer}
+.field input:focus,.field select:focus{outline:none;border-color:var(--gov);box-shadow:0 0 0 3px color-mix(in srgb,var(--gov) 25%,transparent)}
+.field.auto select{border-color:var(--tech);background:var(--tech-soft);font-weight:600}
+.auto-note{display:none;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--tech-ink)}
+.field.auto .auto-note{display:flex}
+.auto-note .i{width:14px;height:14px}
+.field .err{font-size:13px;color:var(--bad)}
+.field .err:empty{display:none}
+.field.invalid input{border-color:var(--bad)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:560px){.two{grid-template-columns:1fr}}
+fieldset.field{border:0;padding:0;margin:0}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media (max-width:560px){.checks{grid-template-columns:1fr}}
+.checks label{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:8px;border:1.5px solid var(--line);background:var(--paper);cursor:pointer;font-size:14px;font-weight:500;line-height:1.4}
+.checks label:has(input:checked){border-color:var(--gov);background:var(--gov-soft)}
+.checks input{width:18px;height:18px;accent-color:var(--gov);margin:1px 0 0;flex:none}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+form.lead .btn{justify-content:center;width:100%;min-height:52px;text-align:center}
+.done{display:flex;gap:12px;align-items:flex-start;padding:16px;border-radius:10px;background:var(--ok-soft);color:var(--ink)}
+.done .i{color:var(--ok);width:24px;height:24px}
+.fail{padding:16px;border-radius:10px;background:var(--bad-soft);color:var(--ink);font-size:14.5px}
+.fail b{color:var(--bad)}
+.privacy{font-size:12.5px;color:var(--ink-2)}
+footer{background:var(--gov);color:var(--on-gov);border-top:1px solid color-mix(in srgb,var(--on-gov) 18%,transparent);padding-block:22px;font-size:13px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;opacity:.8}
+
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn,.mod{transition:none}}
+</style>
+
+<!-- Icon sprite (Lucide, MIT) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-landmark" viewBox="0 0 24 24"><path d="M3 22h18M6 18v-7M10 18v-7M14 18v-7M18 18v-7M12 2l8 5H4z"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="i-hat" viewBox="0 0 24 24"><path d="M2 18a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v2z"/><path d="M10 10V5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5"/><path d="M4 15v-3a6 6 0 0 1 6-6"/><path d="M14 6a6 6 0 0 1 6 6v3"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-tick" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-cross" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></symbol>
+  <symbol id="i-db" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></symbol>
+  <symbol id="i-gantt" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 7h8M10 12h9M8 17h6"/></symbol>
+  <symbol id="i-box" viewBox="0 0 24 24"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5M12 22V12"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15M9 3.236v15"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="m9 15 2 2 4-4"/></symbol>
+  <symbol id="i-stamp" viewBox="0 0 24 24"><path d="M5 22h14M19.27 13.73A2.5 2.5 0 0 0 17.5 13h-11A2.5 2.5 0 0 0 4 15.5V17a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-1.5c0-.66-.26-1.3-.73-1.77Z"/><path d="M14 13V8.5C14 7 15 7 15 5a3 3 0 0 0-6 0c0 2 1 2 1 3.5V13"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+  <symbol id="i-cash" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4M12 17h.01"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
+  <symbol id="i-plug" viewBox="0 0 24 24"><path d="M12 22v-5M9 8V2M15 8V2M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z"/></symbol>
+  <symbol id="i-video" viewBox="0 0 24 24"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/></symbol>
+  <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+  <symbol id="i-tablet" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M12 18h.01"/></symbol>
+  <symbol id="i-headset" viewBox="0 0 24 24"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/></symbol>
+</svg>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="OneBee HybridXD Khối Nhà nước, về đầu trang"><span class="brand-mark" aria-hidden="true"><i></i><i></i></span><span>OneBee Hybrid<span class="tech-t">XD</span><small>KHỐI CƠ QUAN NHÀ NƯỚC</small></span></a>
+    <ul class="nav-links">
+      <li><a href="#van-de">Vấn đề</a></li>
+      <li><a href="#kien-truc">Kiến trúc</a></li>
+      <li><a href="#vai-tro">Vai trò</a></li>
+      <li><a href="#nghiep-vu">Nghiệp vụ</a></li>
+      <li><a href="#hieu-qua">Hiệu quả</a></li>
+      <li><a href="#bao-gia">Báo giá</a></li>
+    </ul>
+    <a class="nav-hot" href="tel:0941701791">0941 701 791</a>
+    <a class="btn btn-primary" href="#lien-he" data-src="Thanh menu">Đăng ký khảo sát</a>
+  </div>
+</header>
+
+<main id="top">
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="kicker"><span class="tag"><svg class="i"><use href="#i-landmark"/></svg>Chính quyền địa phương 2 cấp</span><span class="tag">Đầu tư công</span><span class="tag">Đô thị số</span></div>
+      <h1>Hệ thống liên thông quản lý <span>Đầu tư công và Đô thị số</span></h1>
+      <p class="lede">Số hóa quy trình nghiệp vụ trên một nền tảng tập trung. Dữ liệu kỹ thuật từ hiện trường liên thông tự động đến UBND cấp Xã, Ban QLDA và Sở chuyên ngành.</p>
+      <div class="ctas">
+        <a class="btn btn-primary" href="#lien-he" data-src="Đầu trang" data-request="Khảo sát hiện trạng & Demo giải pháp">Đăng ký khảo sát hiện trạng &amp; Nhận Demo <svg class="i"><use href="#i-arrow"/></svg></a>
+        <a class="btn btn-ghost" href="#lien-he" data-src="Đầu trang" data-request="Tài liệu thuyết minh kiến trúc hệ thống"><svg class="i"><use href="#i-file"/></svg>Nhận Tài liệu Thuyết minh Kiến trúc</a>
+      </div>
+      <div class="legend" aria-label="Quy ước màu">
+        <span><i class="sw t"></i>Hệ thống kỹ thuật: GIS, BIM, Meegle</span>
+        <span><i class="sw g"></i>Lark Suite: quy trình, phê duyệt, lưu trữ</span>
+      </div>
+    </div>
+
+    <figure class="tiers" aria-label="Sơ đồ phân tầng: dữ liệu GIS, BIM, Meegle từ hiện trường liên thông qua API lên quy trình hành chính trên Lark của UBND Xã, Ban QLDA và Sở chuyên ngành">
+      <div class="tier-band g">
+        <div class="tier-cap mono"><span>Tầng hành chính · Lark Suite</span><span>Báo cáo · Phê duyệt</span></div>
+        <div class="levels">
+          <div class="lvl"><span class="ico"><svg class="i"><use href="#i-home"/></svg></span><b>UBND cấp Xã</b><small>Tiếp nhận hồ sơ, cập nhật hiện trạng</small></div>
+          <span class="lv-arr" aria-hidden="true"><svg class="i"><use href="#i-arrow"/></svg></span>
+          <div class="lvl"><span class="ico"><svg class="i"><use href="#i-hat"/></svg></span><b>Ban QLDA</b><small>Giám sát thi công, giải ngân vốn</small></div>
+          <span class="lv-arr" aria-hidden="true"><svg class="i"><use href="#i-arrow"/></svg></span>
+          <div class="lvl"><span class="ico"><svg class="i"><use href="#i-landmark"/></svg></span><b>Sở chuyên ngành</b><small>Thẩm định, phê duyệt, điều hành</small></div>
+        </div>
+      </div>
+      <div class="api-link" aria-hidden="true"><i class="rail"></i><span><svg class="i"><use href="#i-plug"/></svg>Liên thông tự động · API ↑</span><i class="rail"></i></div>
+      <div class="tier-band t">
+        <div class="tier-cap mono"><span>Tầng dữ liệu kỹ thuật</span><span>Hiện trường · Tọa độ đất</span></div>
+        <div class="techs">
+          <div class="tc"><span class="ico"><svg class="i"><use href="#i-map"/></svg></span><div><b>GIS</b><small>Bản đồ quy hoạch, thửa đất</small></div></div>
+          <div class="tc"><span class="ico"><svg class="i"><use href="#i-box"/></svg></span><div><b>BIM</b><small>Mô hình thiết kế 3D</small></div></div>
+          <div class="tc"><span class="ico"><svg class="i"><use href="#i-gantt"/></svg></span><div><b>Meegle</b><small>Sản lượng công trường</small></div></div>
+        </div>
+      </div>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ THÁP CHỈ HUY ============ -->
+<section class="tower" id="thap-chi-huy">
+  <div class="wrap">
+    <div class="tower-head">
+      <div><p class="mono" style="color:var(--ink-2)">Tháp chỉ huy · Dashboard lãnh đạo</p><h2>Lãnh đạo Sở, Ban QLDA nắm toàn cảnh trên một màn hình</h2></div>
+      <p>Mô phỏng giao diện Lark Dashboard · số liệu mẫu</p>
+    </div>
+    <div class="dash">
+      <div class="dash-bar"><b>Sở Xây dựng tỉnh · Danh mục dự án đầu tư công năm 2026</b><span class="mono">Cập nhật tự động · 30/09/2026</span></div>
+      <div class="kpis">
+        <div class="kpi"><span class="lb">Dự án đang quản lý</span><span class="v">48</span><span class="s">12 dự án khởi công mới</span><span class="flow-n" aria-hidden="true"><svg class="i"><use href="#i-arrow"/></svg></span></div>
+        <div class="kpi"><span class="lb">Đúng tiến độ</span><span class="v">81%</span><span class="s"><b>39/48</b> dự án · 9 dự án chậm</span><div class="meter"><i style="width:81%;background:var(--ok)"></i></div><span class="flow-n" aria-hidden="true"><svg class="i"><use href="#i-arrow"/></svg></span></div>
+        <div class="kpi"><span class="lb">Giải ngân / kế hoạch vốn năm</span><span class="v">62%</span><span class="s"><b>744</b> / 1.200 tỷ đồng</span><div class="meter"><i style="width:62%;background:var(--c-act)"></i></div><span class="flow-n" aria-hidden="true"><svg class="i"><use href="#i-arrow"/></svg></span></div>
+        <div class="kpi"><span class="lb">Hồ sơ đang chờ duyệt</span><span class="v">17</span><span class="s"><b style="color:var(--warn)">3</b> hồ sơ sắp hết hạn xử lý</span></div>
+      </div>
+      <div class="dash-body">
+        <div class="chart-box">
+          <div class="chart-top"><b>Kế hoạch vốn giao và giá trị đã giải ngân (lũy kế, tỷ đồng)</b>
+            <div class="chart-legend"><span><i class="a"></i>Đã giải ngân</span><span><i class="p"></i>Kế hoạch vốn</span></div></div>
+          <div class="chart-wrap" id="chart"></div>
+          <table class="sr-table" id="chart-table"><caption>Lũy kế theo tháng năm 2026, tỷ đồng</caption></table>
+        </div>
+        <div class="queue">
+          <h3>Hồ sơ cần chú ý</h3>
+          <div class="qi w"><span class="st"><svg class="i"><use href="#i-clock"/></svg></span><div><b>HS-2026-0142 · Cấp giấy phép xây dựng</b><small>Đang chờ phản hồi từ Sở Nông nghiệp và Môi trường</small><span class="pill">Còn 1 ngày</span></div></div>
+          <div class="qi b"><span class="st"><svg class="i"><use href="#i-alert"/></svg></span><div><b>Đường liên xã Đông – Tây, gói XL-02</b><small>Khối lượng đề nghị nghiệm thu vượt hợp đồng gốc, đã khóa quy trình</small><span class="pill">Cần kiểm tra</span></div></div>
+          <div class="qi o"><span class="st"><svg class="i"><use href="#i-check"/></svg></span><div><b>Trường THCS xã Bình An, đợt thanh toán 3</b><small>Giám đốc Ban đã ký số, chuyển Kho bạc</small><span class="pill">Hoàn thành</span></div></div>
+        </div>
+      </div>
+      <p class="dash-note">Mỗi ô số liệu liên kết xuống danh sách dự án và hồ sơ chi tiết. Dữ liệu tự cập nhật từ Meegle, GIS và các luồng phê duyệt trên Lark.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 01 VẤN ĐỀ ============ -->
+<section id="van-de" class="alt">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow mono"><b>01</b>Vấn đề</div>
+      <h2>Những điểm nghẽn quen thuộc ở từng cấp</h2>
+      <p>Hồ sơ giấy, bản đồ rời rạc và quy trình tuần tự khiến dữ liệu chậm, lệch và khó giải trình.</p>
+    </div>
+    <div class="pains-grid">
+      <article class="pain">
+        <div class="pain-h"><span class="ico"><svg class="i"><use href="#i-landmark"/></svg></span><div><h3>Sở chuyên ngành</h3><small>Sở Xây dựng và các Sở phối hợp</small></div></div>
+        <ul class="pains">
+          <li><svg class="i"><use href="#i-x"/></svg>Lấy ý kiến liên ngành bằng công văn giấy, mất vài tuần đến cả tháng</li>
+          <li><svg class="i"><use href="#i-x"/></svg>Không biết hồ sơ đang dừng ở cơ quan nào</li>
+          <li><svg class="i"><use href="#i-x"/></svg>Báo cáo tổng hợp phải chờ đơn vị cấp dưới gửi lên</li>
+        </ul>
+      </article>
+      <article class="pain">
+        <div class="pain-h"><span class="ico"><svg class="i"><use href="#i-hat"/></svg></span><div><h3>Ban QLDA</h3><small>Ban QLDA đầu tư xây dựng chuyên ngành, khu vực</small></div></div>
+        <ul class="pains">
+          <li><svg class="i"><use href="#i-x"/></svg>Tiến độ giải ngân vốn đầu tư công chậm so với kế hoạch</li>
+          <li><svg class="i"><use href="#i-x"/></svg>Nguy cơ thanh toán vượt khối lượng hợp đồng, vượt tổng mức đầu tư</li>
+          <li><svg class="i"><use href="#i-x"/></svg>Khối lượng hoàn công sai lệch, rủi ro khi thanh tra, kiểm toán</li>
+        </ul>
+      </article>
+      <article class="pain">
+        <div class="pain-h"><span class="ico"><svg class="i"><use href="#i-home"/></svg></span><div><h3>UBND cấp Xã</h3><small>Công chức địa chính – xây dựng, bộ phận một cửa</small></div></div>
+        <ul class="pains">
+          <li><svg class="i"><use href="#i-x"/></svg>Dùng bản đồ cũ, file CAD rời rạc, lệch với quy hoạch Sở vừa duyệt</li>
+          <li><svg class="i"><use href="#i-x"/></svg>Hồ sơ giấy luân chuyển dễ thất lạc</li>
+          <li><svg class="i"><use href="#i-x"/></svg>Người dân, doanh nghiệp phải hỏi nhiều lần về tình trạng hồ sơ</li>
+        </ul>
+      </article>
+    </div>
+    <div class="flows">
+      <div class="fl bad">
+        <h4><svg class="i"><use href="#i-x"/></svg>Hiện tại: luân chuyển tuần tự bằng giấy</h4>
+        <div class="chain"><span class="node">UBND Xã</span><span class="arr broken">- công văn -›</span><span class="node">Sở Xây dựng</span><span class="arr broken">- lần lượt -›</span><span class="node x">Sở A → Sở B → Sở C</span></div>
+        <p class="note">Mỗi bước chờ bước trước. Không ai nhìn thấy toàn bộ luồng.</p>
+      </div>
+      <div class="fl good">
+        <h4><svg class="i"><use href="#i-check"/></svg>Với Hybrid: liên thông và song song</h4>
+        <div class="chain"><span class="node g">UBND Xã</span><span class="arr">→ Lark →</span><span class="node g">Sở Xây dựng</span><span class="arr">⇉</span><span class="node g">Các Sở cùng lúc</span></div>
+        <p class="note">Một mã hồ sơ xuyên suốt. Mọi cấp xem cùng một trạng thái, cùng một bản đồ.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 02 KIẾN TRÚC ============ -->
+<section id="kien-truc">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow mono"><b>02</b>Kiến trúc giải pháp</div>
+      <h2>Hai tầng dữ liệu, một trục liên thông</h2>
+      <p>Hệ thống kỹ thuật tạo ra dữ liệu gốc. Lark Suite vận hành quy trình hành chính, phê duyệt và lưu trữ. API nối hai tầng theo thời gian thực.</p>
+    </div>
+    <div class="arch">
+      <div class="layer g">
+        <div class="layer-id"><span class="lt mono">Tầng 1</span><h3>Quy trình hành chính</h3><p>Lark Suite: tiếp nhận, luân chuyển, phê duyệt, báo cáo, lưu trữ.</p></div>
+        <div class="tiles">
+          <div class="tile"><span class="ico"><svg class="i"><use href="#i-stamp"/></svg></span><b>Approval</b><span>Phê duyệt song song liên ngành, ký số</span></div>
+          <div class="tile"><span class="ico"><svg class="i"><use href="#i-db"/></svg></span><b>Base · Dashboard</b><span>Mã hồ sơ, theo dõi hạn, báo cáo tự động</span></div>
+          <div class="tile"><span class="ico"><svg class="i"><use href="#i-video"/></svg></span><b>Chat · Meeting</b><span>Nhắc hạn tự động, họp hội đồng trực tuyến</span></div>
+          <div class="tile"><span class="ico"><svg class="i"><use href="#i-folder"/></svg></span><b>Drive</b><span>Kho hồ sơ phân quyền theo cấp hành chính</span></div>
+        </div>
+      </div>
+      <div class="bridge" aria-label="Dữ liệu từ Tầng 2 lên Tầng 1 qua API">
+        <div><svg class="up" viewBox="0 0 22 40" aria-hidden="true"><path d="M11 38V5" stroke="currentColor" stroke-width="2" stroke-dasharray="5 4" fill="none"/><path d="M4 11l7-8 7 8" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Tọa độ, ranh giới thửa đất</span></div>
+        <div><svg class="up" viewBox="0 0 22 40" aria-hidden="true"><path d="M11 38V5" stroke="currentColor" stroke-width="2" stroke-dasharray="5 4" fill="none"/><path d="M4 11l7-8 7 8" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Kết quả kiểm tra mô hình</span></div>
+        <div><svg class="up" viewBox="0 0 22 40" aria-hidden="true"><path d="M11 38V5" stroke="currentColor" stroke-width="2" stroke-dasharray="5 4" fill="none"/><path d="M4 11l7-8 7 8" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Sản lượng nghiệm thu</span></div>
+      </div>
+      <div class="layer t">
+        <div class="layer-id"><span class="lt mono">Tầng 2</span><h3>Dữ liệu kỹ thuật</h3><p>Nơi phát sinh dữ liệu vị trí, mô hình và sản lượng.</p></div>
+        <div class="tiles three">
+          <div class="tile"><span class="ico"><svg class="i"><use href="#i-map"/></svg></span><b>Cloud GIS</b><span>Bản đồ quy hoạch gốc dùng chung toàn tỉnh</span></div>
+          <div class="tile"><span class="ico"><svg class="i"><use href="#i-box"/></svg></span><b>BIM</b><span>Kiểm tra xung đột, quy chuẩn, khối lượng</span></div>
+          <div class="tile"><span class="ico"><svg class="i"><use href="#i-gantt"/></svg></span><b>Meegle</b><span>Sản lượng hiện trường kèm ảnh và GPS</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="knots">
+      <article class="knot">
+        <div class="knot-h"><span class="mono">Điểm nghẽn 1</span><h3>Lấy ý kiến liên ngành: duyệt song song, đếm ngược thời hạn</h3><p>Hồ sơ được phân phối cùng lúc đến các Sở liên quan. Lark Bot nhắc chuyên viên trước khi hết hạn.</p></div>
+        <div class="appr" role="img" aria-label="Minh họa luồng duyệt song song trên Lark Approval: hai cơ quan đã cho ý kiến, Sở Nông nghiệp và Môi trường còn 1 ngày">
+          <div class="appr-h"><b>HS-2026-0142 · Cấp giấy phép xây dựng</b><span>Lark Approval</span></div>
+          <div class="appr-src"><svg class="i"><use href="#i-landmark"/></svg><span><b>Sở Xây dựng</b> chủ trì · đã phân phối lấy ý kiến 3 cơ quan</span></div>
+          <div class="par">
+            <span class="par-lbl">Xử lý song song · thời hạn 5 ngày</span>
+            <div class="pa ok"><b>Công an tỉnh (PCCC)</b><span class="s"><svg class="i"><use href="#i-check"/></svg>Đã cho ý kiến</span></div>
+            <div class="pa ok"><b>Sở Tài chính</b><span class="s"><svg class="i"><use href="#i-check"/></svg>Đã cho ý kiến</span></div>
+            <div class="pa wait"><b>Sở Nông nghiệp và Môi trường</b><span class="s"><svg class="i"><use href="#i-clock"/></svg>Đang chờ · còn 1 ngày</span></div>
+          </div>
+          <div class="bot"><svg class="i"><use href="#i-chat"/></svg><span><b>Lark Bot</b> đã nhắn chuyên viên phụ trách: “Hồ sơ HS-2026-0142 còn 1 ngày đến hạn cho ý kiến.”</span></div>
+        </div>
+        <ul>
+          <li><svg class="i"><use href="#i-check"/></svg>Nhóm chat gắn với mã hồ sơ để trao đổi vướng mắc kỹ thuật</li>
+          <li><svg class="i"><use href="#i-check"/></svg>Mở họp khẩn trên Lark Meeting ngay trong hồ sơ</li>
+        </ul>
+      </article>
+
+      <article class="knot">
+        <div class="knot-h"><span class="mono">Điểm nghẽn 2</span><h3>Quy hoạch lệch giữa Xã và Sở: một bản đồ gốc duy nhất</h3><p>Sở là đơn vị duy nhất cập nhật dữ liệu gốc. UBND Xã xem đúng phân khu của mình, tự cập nhật khi Sở phê duyệt điều chỉnh.</p></div>
+        <div class="gis" role="img" aria-label="Minh họa: bản đồ Cloud GIS trung tâm đồng bộ cùng một thông số thửa đất đến máy tính chuyên viên Sở và máy tính bảng cán bộ Xã">
+          <div class="gis-src"><svg class="i" style="color:var(--tech-ink)"><use href="#i-map"/></svg><b>Cloud GIS · Bản đồ quy hoạch gốc</b><small>Chỉ Sở có quyền cập nhật</small></div>
+          <svg class="gis-arrows" viewBox="0 0 400 36" preserveAspectRatio="none" aria-hidden="true"><path d="M200 0 C200 18 100 14 100 34 M200 0 C200 18 300 14 300 34" stroke="currentColor" stroke-width="2" stroke-dasharray="5 4" fill="none"/></svg>
+          <div class="screen">
+            <div class="screen-h"><svg class="i"><use href="#i-monitor"/></svg>Chuyên viên Sở</div>
+            <svg viewBox="0 0 200 110" aria-hidden="true"><rect class="parcel-n" x="8" y="10" width="54" height="40" rx="2"/><rect class="parcel-n" x="8" y="60" width="54" height="40" rx="2"/><path class="parcel" d="M76 12 L150 18 L142 96 L80 92 Z"/><rect class="parcel-n" x="160" y="10" width="32" height="90" rx="2"/><path class="road" d="M68 0 V110"/></svg>
+            <div class="meta">Thửa 245 · Tờ 18<span>312,5 m² · Đất ở đô thị</span></div>
+          </div>
+          <div class="screen tab">
+            <div class="screen-h"><svg class="i"><use href="#i-tablet"/></svg>Cán bộ địa chính Xã</div>
+            <svg viewBox="0 0 200 110" aria-hidden="true"><rect class="parcel-n" x="8" y="10" width="54" height="40" rx="2"/><rect class="parcel-n" x="8" y="60" width="54" height="40" rx="2"/><path class="parcel" d="M76 12 L150 18 L142 96 L80 92 Z"/><rect class="parcel-n" x="160" y="10" width="32" height="90" rx="2"/><path class="road" d="M68 0 V110"/></svg>
+            <div class="meta">Thửa 245 · Tờ 18<span>312,5 m² · Đất ở đô thị</span></div>
+          </div>
+        </div>
+        <ul>
+          <li><svg class="i"><use href="#i-check"/></svg>Ảnh xác minh hiện trường kèm GPS tự ghi vào Lark Base và ghim lên bản đồ của Sở</li>
+          <li><svg class="i"><use href="#i-check"/></svg>Phân quyền theo địa bàn: Xã chỉ thấy phân khu của Xã</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03 VAI TRÒ ============ -->
+<section id="vai-tro" class="alt">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow mono"><b>03</b>Phân quyền &amp; vai trò</div>
+      <h2>Mỗi cấp nhìn vào là biết mình dùng để làm gì</h2>
+    </div>
+    <div class="role-cards">
+      <article class="rc">
+        <div class="rc-h"><span class="ico"><svg class="i"><use href="#i-landmark"/></svg></span><div><h3>Sở chuyên ngành</h3><small>Sở Xây dựng, cơ quan quản lý quy hoạch – kiến trúc</small></div></div>
+        <span class="use">Dùng để</span>
+        <ul><li><svg class="i"><use href="#i-check"/></svg>Xem báo cáo tổng thể toàn tỉnh</li><li><svg class="i"><use href="#i-check"/></svg>Chủ trì thẩm định, ký số phê duyệt</li><li><svg class="i"><use href="#i-check"/></svg>Kiểm tra quy hoạch liên thông</li></ul>
+      </article>
+      <article class="rc">
+        <div class="rc-h"><span class="ico"><svg class="i"><use href="#i-hat"/></svg></span><div><h3>Ban QLDA chuyên ngành</h3><small>Ban QLDA cấp tỉnh, khu vực</small></div></div>
+        <span class="use">Dùng để</span>
+        <ul><li><svg class="i"><use href="#i-check"/></svg>Theo dõi tiến độ thi công thực tế</li><li><svg class="i"><use href="#i-check"/></svg>Giám sát sản lượng, kiểm soát giải ngân</li><li><svg class="i"><use href="#i-check"/></svg>Chuẩn bị hồ sơ thanh, quyết toán</li></ul>
+      </article>
+      <article class="rc">
+        <div class="rc-h"><span class="ico"><svg class="i"><use href="#i-home"/></svg></span><div><h3>UBND cấp Xã / Phường</h3><small>Bộ phận một cửa, công chức địa chính – xây dựng</small></div></div>
+        <span class="use">Dùng để</span>
+        <ul><li><svg class="i"><use href="#i-check"/></svg>Tiếp nhận hồ sơ ban đầu</li><li><svg class="i"><use href="#i-check"/></svg>Cập nhật biến động đất đai trên bản đồ số</li><li><svg class="i"><use href="#i-check"/></svg>Trả lời người dân ngay tại chỗ</li></ul>
+      </article>
+    </div>
+    <div class="tbl-wrap">
+      <table class="t">
+        <thead><tr><th scope="col" class="n">Cấp quản lý</th><th scope="col" class="g">Vai trò trên Lark Suite</th><th scope="col" class="t">Vai trò trên GIS / BIM</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">UBND cấp Xã</th><td>Tiếp nhận hồ sơ, tạo phiếu luân chuyển, báo cáo biến động hiện trạng</td><td>Tra cứu nhanh bản đồ quy hoạch để trả lời người dân tại chỗ</td></tr>
+          <tr><th scope="row">Ban QLDA</th><td>Duyệt nghiệm thu, thanh toán liên cấp, theo dõi dashboard giải ngân</td><td>Đối chiếu sản lượng Meegle, đánh dấu cấu kiện hoàn thành trên BIM</td></tr>
+          <tr><th scope="row">Sở chuyên ngành</th><td>Chủ trì thẩm định, điều phối ý kiến liên ngành, ký số phê duyệt cuối cùng</td><td>Quản lý dữ liệu quy hoạch gốc toàn tỉnh, thẩm định mô hình BIM</td></tr>
+          <tr><th scope="row">Cơ quan phối hợp</th><td>Cho ý kiến song song trong thời hạn, trao đổi trong nhóm hồ sơ</td><td>Tra cứu lớp dữ liệu chuyên ngành liên quan</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 04 NGHIỆP VỤ ============ -->
+<section id="nghiep-vu">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow mono"><b>04</b>5 hệ nghiệp vụ cốt lõi</div>
+      <h2>Chọn nghiệp vụ để xem luồng xử lý 4 bước</h2>
+      <p>Mỗi bước gắn nhãn công đoạn theo Luật Xây dựng, Luật Đầu tư công và Luật Quy hoạch đô thị và nông thôn.</p>
+    </div>
+    <div class="mods" role="tablist" aria-label="Chọn nghiệp vụ" id="mods"></div>
+    <div class="panel" role="tabpanel" id="panel" tabindex="0"></div>
+  </div>
+</section>
+
+<!-- ============ 05 HIỆU QUẢ ============ -->
+<section id="hieu-qua" class="alt">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow mono"><b>05</b>Hiệu quả cải cách hành chính</div>
+      <h2>Trước và sau khi liên thông số</h2>
+    </div>
+    <div class="metrics">
+      <div class="metric"><span class="num">−60%</span><p>Thời gian luân chuyển hồ sơ giữa UBND Xã và Sở chuyên ngành</p></div>
+      <div class="metric"><span class="num">0</span><p>Hồ sơ thất lạc nhờ kho lưu trữ tập trung, phân quyền theo thẩm quyền hành chính</p></div>
+      <div class="metric"><span class="num">100%</span><p>Dữ liệu vị trí liên thông trực tiếp từ hiện trường lên bản đồ số GIS trung tâm</p></div>
+    </div>
+    <div class="tbl-wrap">
+      <table class="t">
+        <thead><tr><th scope="col" class="n">Nghiệp vụ</th><th scope="col" class="n">Quy trình thủ công</th><th scope="col" class="g">Liên thông số Lark + GIS/BIM</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Lấy ý kiến giữa các Sở</th><td><span class="mk x"><svg class="i"><use href="#i-cross"/></svg></span>Công văn giấy, chờ tuần tự, không rõ trạng thái</td><td><span class="mk v"><svg class="i"><use href="#i-tick"/></svg></span>Duyệt song song trên Lark Approval, Lark Bot nhắc hạn</td></tr>
+          <tr><th scope="row">Đồng bộ quy hoạch Xã – Sở</th><td><span class="mk x"><svg class="i"><use href="#i-cross"/></svg></span>Bản đồ giấy, file CAD rời rạc, dễ chồng ranh giới</td><td><span class="mk v"><svg class="i"><use href="#i-tick"/></svg></span>Một bản đồ Cloud GIS chung, cập nhật trên mọi thiết bị</td></tr>
+          <tr><th scope="row">Theo dõi hồ sơ</th><td><span class="mk x"><svg class="i"><use href="#i-cross"/></svg></span>Gọi điện hỏi chuyên viên, tra sổ sách</td><td><span class="mk v"><svg class="i"><use href="#i-tick"/></svg></span>Xem trạng thái trên Dashboard Lark Base mọi lúc</td></tr>
+          <tr><th scope="row">Xác nhận sản lượng</th><td><span class="mk x"><svg class="i"><use href="#i-cross"/></svg></span>Nhà thầu báo cáo Excel, khó kiểm chứng</td><td><span class="mk v"><svg class="i"><use href="#i-tick"/></svg></span>Meegle bắt buộc ảnh hiện trường có định vị GPS</td></tr>
+          <tr><th scope="row">Kiểm soát vượt hạn mức</th><td><span class="mk x"><svg class="i"><use href="#i-cross"/></svg></span>Đối chiếu thủ công phụ lục hợp đồng giấy</td><td><span class="mk v"><svg class="i"><use href="#i-tick"/></svg></span>Lark Base tự khóa quy trình khi vượt hợp đồng gốc</td></tr>
+          <tr><th scope="row">Báo cáo giải ngân</th><td><span class="mk x"><svg class="i"><use href="#i-cross"/></svg></span>Kế toán tổng hợp cả tuần để gửi Sở, UBND tỉnh</td><td><span class="mk v"><svg class="i"><use href="#i-tick"/></svg></span>Dashboard tự cập nhật, lãnh đạo xem mọi lúc</td></tr>
+          <tr><th scope="row">Giải trình thanh tra</th><td><span class="mk x"><svg class="i"><use href="#i-cross"/></svg></span>Tìm hồ sơ giấy nhiều tuần, khó xác định trách nhiệm</td><td><span class="mk v"><svg class="i"><use href="#i-tick"/></svg></span>Xuất lịch sử phê duyệt trong vài thao tác</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="audit">
+      <div>
+        <span class="tag"><svg class="i"><use href="#i-shield"/></svg>Audit Trail</span>
+        <h3 style="margin-top:12px">Lưu vết lịch sử phê duyệt, rõ trách nhiệm cá nhân</h3>
+        <p>Ai duyệt, lúc nào, kèm ý kiến gì, tài liệu nào được sửa. Lịch sử không sửa xóa được, sẵn sàng phục vụ thanh tra và Kiểm toán Nhà nước.</p>
+      </div>
+      <ol class="log" aria-label="Ví dụ lịch sử phê duyệt hồ sơ thanh toán đợt 3">
+        <li><time>14/09/2026 · 08:42</time><b>Chuyên viên P. Kỹ thuật</b> xác nhận khối lượng đợt 3 từ Meegle<span class="q">Đính kèm 24 ảnh hiện trường có GPS</span></li>
+        <li class="rej"><time>14/09/2026 · 10:15</time><b>Trưởng phòng Kỹ thuật</b> từ chối, yêu cầu bổ sung<span class="q">“Thiếu biên bản nghiệm thu hạng mục cống thoát nước”</span></li>
+        <li><time>15/09/2026 · 09:03</time><b>Nhà thầu</b> bổ sung biên bản, hồ sơ tự quay lại luồng duyệt</li>
+        <li><time>15/09/2026 · 16:20</time><b>Phòng Tài chính – Kế toán</b> duyệt giá trị thanh toán</li>
+        <li><time>16/09/2026 · 08:11</time><b>Giám đốc Ban QLDA</b> ký số, chuyển Kho bạc Nhà nước</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 06 BÁO GIÁ ============ -->
+<section id="bao-gia">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow mono"><b>06</b>Báo giá tham khảo</div>
+      <h2>Cấu hình đề xuất theo từng cấp cơ quan</h2>
+      <p>Chi phí dự kiến theo năm. Biên bản báo giá chính thức được lập theo phạm vi khảo sát thực tế tại đơn vị.</p>
+    </div>
+    <div class="cfgs">
+      <article class="cfg">
+        <div class="cfg-top"><span class="ico"><svg class="i"><use href="#i-home"/></svg></span><span class="mono">Cấp cơ sở</span></div>
+        <div><h3>UBND cấp Xã / Phường</h3><p class="for">Tiếp nhận hồ sơ quy hoạch, cấp phép ban đầu, số hóa dữ liệu địa phương</p></div>
+        <div class="price"><b>40 triệu</b><span>đồng / năm</span></div>
+        <div style="display:grid;gap:12px;align-content:start">
+          <div class="formula"><span class="p g">Lark CB</span><em>+</em><span class="p t">Giám sát Hiện trường</span></div>
+          <p class="goal">Bản đồ quy hoạch số và kiểm tra thực địa cấp cơ sở.</p>
+        </div>
+        <a class="btn btn-primary" href="#lien-he" data-package="Cấp cơ sở · UBND Xã/Phường" data-level="UBND cấp Xã / Phường" data-request="Biên bản báo giá & Thuyết minh giải pháp">Yêu cầu báo giá cho đơn vị</a>
+      </article>
+      <article class="cfg">
+        <div class="cfg-top"><span class="ico"><svg class="i"><use href="#i-hat"/></svg></span><span class="mono">Ban QLDA</span></div>
+        <div><h3>Ban QLDA chuyên ngành</h3><p class="for">Quản lý thi công, đối chiếu khối lượng, kiểm soát tiến độ giải ngân vốn đầu tư công</p></div>
+        <div class="price"><b>150 triệu</b><span>đồng / năm</span></div>
+        <div style="display:grid;gap:12px;align-content:start">
+          <div class="formula"><span class="p g">Lark NC</span><em>+</em><span class="p t">QLDA Full</span></div>
+          <p class="goal">Tích hợp sâu tiến độ thi công và kiểm soát dòng tiền ngân sách.</p>
+        </div>
+        <a class="btn btn-primary" href="#lien-he" data-package="Ban QLDA chuyên ngành" data-level="Ban QLDA" data-request="Biên bản báo giá & Thuyết minh giải pháp" data-interest="Thanh quyết toán & Giải ngân">Yêu cầu báo giá cho đơn vị</a>
+      </article>
+      <article class="cfg hl">
+        <div class="cfg-top"><span class="ico"><svg class="i"><use href="#i-landmark"/></svg></span><span class="mono">Cấp tỉnh</span></div>
+        <div><h3>Trung tâm điều hành cấp Tỉnh</h3><p class="for">Sở Xây dựng, Sở Công Thương, Sở Nông nghiệp và Môi trường, Ban Quản lý Khu kinh tế</p></div>
+        <div class="price"><b>210 triệu</b><span>đồng / năm</span></div>
+        <div style="display:grid;gap:12px;align-content:start">
+          <div class="formula"><span class="p g">Lark Admin</span><em>+</em><span class="p t">QLDA Full</span><em>+</em><span class="p t">Tư vấn Thiết kế (BIM)</span></div>
+          <p class="goal">Thẩm định dự án, phê duyệt liên ngành song song, kho Cloud GIS toàn tỉnh, lưu trữ hậu kiểm.</p>
+        </div>
+        <a class="btn btn-primary" href="#lien-he" data-package="Trung tâm điều hành cấp Tỉnh" data-level="Sở chuyên ngành" data-request="Biên bản báo giá & Thuyết minh giải pháp">Yêu cầu báo giá cho đơn vị</a>
+      </article>
+    </div>
+
+    <div class="builder" id="tu-cau-hinh">
+      <div>
+        <h3>Tự cấu hình gói giải pháp</h3>
+        <p class="sub">Chọn nền tảng và dịch vụ bổ sung, tổng chi phí tính ngay.</p>
+        <div class="opts">
+          <fieldset>
+            <legend>Nền tảng Quản trị &amp; Data · Lark Suite (chọn 1)</legend>
+            <label class="opt"><input type="radio" name="b-lark" id="b-cb" value="Lark CB" data-price="20"><span>Lark CB · Cơ bản<small>UBND Xã/Phường, Ban QLDA quy mô nhỏ</small></span><b>20 triệu</b></label>
+            <label class="opt"><input type="radio" name="b-lark" id="b-nc" value="Lark NC" data-price="30" checked><span>Lark NC · Nâng cao<small>Ban QLDA chuyên ngành, quy trình liên thông</small></span><b>30 triệu</b></label>
+            <label class="opt"><input type="radio" name="b-lark" id="b-ad" value="Lark Admin" data-price="50"><span>Lark Admin · Toàn diện<small>Cấp Sở, Dashboard tổng, bảo mật nâng cao</small></span><b>50 triệu</b></label>
+          </fieldset>
+          <fieldset>
+            <legend>Giải pháp kỹ thuật &amp; nghiệp vụ (chọn nhiều)</legend>
+            <label class="opt"><input type="checkbox" id="b-qlda" value="QLDA Full" data-price="120" checked><span>QLDA Full<small>Trọn bộ 5 nghiệp vụ: Quy hoạch, Cấp phép, Thẩm định, Quyết toán, Hậu kiểm</small></span><b>120 triệu</b></label>
+            <label class="opt"><input type="checkbox" id="b-gs" value="Giám sát Hiện trường" data-price="20"><span>Giám sát Hiện trường<small>App Meegle/GIS xác nhận sản lượng, tiến độ giải ngân</small></span><b>20 triệu</b></label>
+            <label class="opt"><input type="checkbox" id="b-tk" value="Tư vấn Thiết kế" data-price="40"><span>Tư vấn Thiết kế<small>BIM bóc tách khối lượng, thẩm định dự án</small></span><b>40 triệu</b></label>
+          </fieldset>
+        </div>
+      </div>
+      <div class="sum" aria-live="polite">
+        <span class="lb">Tổng chi phí dự kiến / năm</span>
+        <span class="total" id="b-total"></span>
+        <ul id="b-lines"></ul>
+        <p class="match" id="b-match" hidden></p>
+        <a class="btn btn-primary" href="#lien-he" id="b-cta" data-request="Biên bản báo giá & Thuyết minh giải pháp">Yêu cầu xuất Biên bản báo giá và Thuyết minh giải pháp cho đơn vị</a>
+      </div>
+    </div>
+
+    <div class="tbl-wrap price-list">
+      <table class="t pl">
+        <thead><tr><th scope="col" class="n">Gói / Dịch vụ</th><th scope="col" class="n num">Đơn giá (đồng)</th><th scope="col" class="n">Đơn vị tính</th><th scope="col" class="n">Ghi chú nghiệp vụ</th></tr></thead>
+        <tbody>
+          <tr class="grp g"><td colspan="4">Nền tảng Quản trị &amp; Data · Lark Suite</td></tr>
+          <tr><td><b>Lark CB</b> (Cơ bản)</td><td class="num">20.000.000</td><td class="unit">Tổ chức / năm</td><td>UBND cấp Xã/Phường hoặc Ban QLDA quy mô nhỏ</td></tr>
+          <tr><td><b>Lark NC</b> (Nâng cao)</td><td class="num">30.000.000</td><td class="unit">Tổ chức / năm</td><td>Ban QLDA chuyên ngành, tối ưu quy trình liên thông</td></tr>
+          <tr><td><b>Lark Admin</b> (Toàn diện)</td><td class="num">50.000.000</td><td class="unit">Tổ chức / năm</td><td>Cấp Sở, trung tâm điều hành Dashboard tổng, bảo mật nâng cao</td></tr>
+          <tr class="grp t"><td colspan="4">Hệ giải pháp Kỹ thuật &amp; Nghiệp vụ chuyên ngành</td></tr>
+          <tr><td><b>QLDA Full</b></td><td class="num">120.000.000</td><td class="unit">Hệ thống / năm</td><td>Trọn bộ số hóa 5 nghiệp vụ: Quy hoạch, Cấp phép, Thẩm định, Quyết toán, Hậu kiểm</td></tr>
+          <tr><td><b>Giám sát Hiện trường</b></td><td class="num">20.000.000</td><td class="unit">Hệ thống / năm</td><td>App di động Meegle/GIS xác nhận sản lượng, tiến độ giải ngân</td></tr>
+          <tr><td><b>Tư vấn Thiết kế</b></td><td class="num">40.000.000</td><td class="unit">Hệ thống / năm</td><td>Mô hình BIM bóc tách khối lượng và thẩm định dự án</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LIÊN HỆ ============ -->
+<section class="contact" id="lien-he">
+  <div class="wrap contact-grid">
+    <div>
+      <h2>Khởi động lộ trình số hóa toàn diện, nâng cao chỉ số cải cách hành chính (PAR INDEX) cho đơn vị</h2>
+      <p class="lede">Chúng tôi đồng hành cùng quý cơ quan khảo sát hiện trạng, xây dựng kiến trúc liên thông dữ liệu và chuẩn bị hồ sơ thuyết minh giải pháp kỹ thuật theo đúng quy chuẩn Nhà nước.</p>
+      <ul>
+        <li><svg class="i"><use href="#i-check"/></svg>Khảo sát hiện trạng quy trình tại đơn vị</li>
+        <li><svg class="i"><use href="#i-check"/></svg>Demo trên luồng nghiệp vụ của đơn vị</li>
+        <li><svg class="i"><use href="#i-check"/></svg>Hồ sơ thuyết minh phục vụ trình phê duyệt chủ trương</li>
+      </ul>
+      <div class="hotline"><svg class="i"><use href="#i-headset"/></svg><div><small>Hotline tư vấn &amp; hỗ trợ kỹ thuật 24/7</small><b><a href="tel:0941701791">0941 701 791</a></b></div></div>
+    </div>
+
+    <form class="lead" id="lead" novalidate>
+      <div class="field"><label for="f-org">Cơ quan / Đơn vị công tác</label><input id="f-org" name="org" autocomplete="organization" placeholder="VD: Ban QLDA ĐTXD các công trình dân dụng tỉnh…" required><span class="err" id="e-org"></span></div>
+      <div class="two">
+        <div class="field"><label for="f-name">Họ và tên cán bộ đại diện</label><input id="f-name" name="name" autocomplete="name" required><span class="err" id="e-name"></span></div>
+        <div class="field"><label for="f-position">Chức vụ / Bộ phận chuyên môn</label><input id="f-position" name="position" autocomplete="organization-title" placeholder="VD: Trưởng phòng Kỹ thuật" required><span class="err" id="e-position"></span></div>
+      </div>
+      <div class="two">
+        <div class="field"><label for="f-phone">Số điện thoại công vụ / Zalo</label><input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required><span class="err" id="e-phone"></span></div>
+        <div class="field"><label for="f-email">Email công vụ <span class="opt-l">(không bắt buộc)</span></label><input id="f-email" name="email" type="email" autocomplete="email" placeholder="ten@donvi.gov.vn"><span class="err" id="e-email"></span></div>
+      </div>
+      <div class="two">
+        <div class="field" id="level-field"><label for="f-level">Cấp quản lý</label>
+          <select id="f-level" name="level"><option>UBND cấp Xã / Phường</option><option>Ban QLDA</option><option>Sở chuyên ngành</option><option>Cơ quan khác</option></select>
+          <span class="auto-note"><svg class="i" aria-hidden="true"><use href="#i-check"/></svg>Theo cấu hình bạn vừa chọn</span></div>
+        <div class="field" id="interest-field"><label for="f-interest">Nghiệp vụ quan tâm</label>
+          <select id="f-interest" name="interest"><option value="Chưa xác định">Chưa xác định</option><option>Quy hoạch &amp; Đất đai</option><option>Cấp phép &amp; TTHC điện tử</option><option>Thẩm định dự án đầu tư công</option><option>Thanh quyết toán &amp; Giải ngân</option><option>Hậu kiểm, Thanh tra &amp; Lưu trữ</option></select>
+          <span class="auto-note"><svg class="i" aria-hidden="true"><use href="#i-check"/></svg>Theo nghiệp vụ bạn đang xem</span></div>
+      </div>
+      <div class="two">
+        <div class="field" id="request-field"><label for="f-request">Yêu cầu</label>
+          <select id="f-request" name="request"><option>Khảo sát hiện trạng &amp; Demo giải pháp</option><option>Tài liệu thuyết minh kiến trúc hệ thống</option><option>Biên bản báo giá &amp; Thuyết minh giải pháp</option><option>Mẫu Dashboard giám sát đầu tư công</option><option>Tài liệu hướng dẫn quy trình hậu kiểm số</option></select>
+          <span class="auto-note"><svg class="i" aria-hidden="true"><use href="#i-check"/></svg>Theo nút bạn vừa bấm</span></div>
+        <div class="field" id="package-field"><label for="f-package">Cấu hình quan tâm</label>
+          <select id="f-package" name="package"><option value="Chưa chọn">Chưa chọn</option><option>Cấp cơ sở · UBND Xã/Phường</option><option>Ban QLDA chuyên ngành</option><option>Trung tâm điều hành cấp Tỉnh</option><option>Tự cấu hình</option></select>
+          <span class="auto-note"><svg class="i" aria-hidden="true"><use href="#i-check"/></svg>Theo cấu hình bạn vừa chọn</span></div>
+      </div>
+      <fieldset class="field">
+        <legend>Nội dung cần hỗ trợ chính</legend>
+        <div class="checks" id="supports">
+          <label><input type="checkbox" name="supports" id="s-1" value="Khảo sát hiện trạng liên thông Xã – Sở">Khảo sát hiện trạng liên thông Xã – Sở</label>
+          <label><input type="checkbox" name="supports" id="s-2" value="Giải pháp kiểm soát tiến độ giải ngân Ban QLDA">Giải pháp kiểm soát tiến độ giải ngân Ban QLDA</label>
+          <label><input type="checkbox" name="supports" id="s-3" value="Số hóa tài liệu lưu trữ">Số hóa tài liệu lưu trữ</label>
+          <label><input type="checkbox" name="supports" id="s-4" value="Yêu cầu làm việc trực tiếp tại đơn vị">Yêu cầu làm việc trực tiếp tại đơn vị</label>
+        </div>
+      </fieldset>
+      <div class="hp" aria-hidden="true"><label for="f-website">Website</label><input id="f-website" name="website" tabindex="-1" autocomplete="off"></div>
+      <button class="btn btn-primary" type="submit" id="submit">Gửi đăng ký khảo sát</button>
+      <p class="privacy">Thông tin chỉ dùng để liên hệ làm việc với đơn vị, không chia sẻ cho bên thứ ba.</p>
+      <div class="done" id="done" hidden role="status"><svg class="i"><use href="#i-check"/></svg><div><b>Đã ghi nhận yêu cầu của đơn vị.</b><br><span id="done-msg"></span></div></div>
+      <div class="fail" id="fail" hidden role="alert"><b>Chưa gửi được yêu cầu.</b> Vui lòng gọi hotline <b>0941 701 791</b> hoặc thử lại sau ít phút.</div>
+    </form>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap"><span>© 2026 OneBee HybridXD · Giải pháp liên thông Đầu tư công &amp; Đô thị số · Hotline 0941 701 791</span><span>Lark, Meegle là thương hiệu của chủ sở hữu tương ứng.</span></div></footer>
+
+<script>
+(function(){
+  const $=id=>document.getElementById(id);
+  const ico=id=>`<svg class="i" aria-hidden="true"><use href="#${id}"/></svg>`;
+
+  /* ================= Biểu đồ giải ngân (tháp chỉ huy) ================= */
+  const MONTHS=['T1','T2','T3','T4','T5','T6','T7','T8','T9','T10','T11','T12'];
+  const PLAN=[40,100,180,270,370,480,600,720,840,960,1080,1200];
+  const ACT=[20,55,110,175,250,340,450,560,744];
+  (function chart(){
+    const W=640,H=250,L=44,R=86,T=14,B=30, iw=W-L-R, ih=H-T-B, max=1200;
+    const x=i=>L+i*iw/11, y=v=>T+ih-v/max*ih;
+    const fmt=v=>v.toLocaleString('vi-VN');
+    let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Biểu đồ đường: kế hoạch vốn lũy kế 1.200 tỷ đồng cả năm; đã giải ngân 744 tỷ đồng đến tháng 9, đạt 62%"><g class="grid">`;
+    [0,300,600,900,1200].forEach(v=>{s+=`<line x1="${L}" x2="${L+iw}" y1="${y(v)}" y2="${y(v)}"/><text x="${L-8}" y="${y(v)+4}" text-anchor="end">${fmt(v)}</text>`;});
+    s+=`</g>`;
+    MONTHS.forEach((m,i)=>{s+=`<text x="${x(i)}" y="${H-10}" text-anchor="middle">${m}</text>`;});
+    const path=a=>a.map((v,i)=>`${i?'L':'M'}${x(i).toFixed(1)} ${y(v).toFixed(1)}`).join(' ');
+    s+=`<path d="${path(PLAN)}" fill="none" stroke="var(--c-plan)" stroke-width="2" stroke-dasharray="6 5" stroke-linecap="round"/>`;
+    s+=`<path d="${path(ACT)}" fill="none" stroke="var(--c-act)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+    const li=ACT.length-1;
+    s+=`<circle cx="${x(li)}" cy="${y(ACT[li])}" r="5" fill="var(--c-act)" stroke="var(--card)" stroke-width="2"/>`;
+    s+=`<text class="lbl-end" x="${x(li)+10}" y="${y(ACT[li])+16}">Đã giải ngân</text><text x="${x(li)+10}" y="${y(ACT[li])+30}">744 tỷ · 62%</text>`;
+    s+=`<text class="lbl-end" x="${x(11)+8}" y="${y(1200)+4}">Kế hoạch vốn</text><text x="${x(11)+8}" y="${y(1200)+18}">1.200 tỷ</text>`;
+    s+=`<line id="xh" x1="0" x2="0" y1="${T}" y2="${T+ih}" stroke="var(--ink-2)" stroke-width="1" stroke-dasharray="3 3" visibility="hidden"/>`;
+    MONTHS.forEach((m,i)=>{s+=`<rect class="hit" data-i="${i}" x="${x(i)-iw/22}" y="${T}" width="${iw/11}" height="${ih}" fill="transparent"/>`;});
+    s+=`</svg><div class="tip" id="tip" hidden></div>`;
+    const box=$('chart'); box.innerHTML=s;
+    const svg=box.querySelector('svg'), tip=$('tip'), xh=$('xh');
+    function show(i){
+      const r=svg.getBoundingClientRect(), k=r.width/W;
+      xh.setAttribute('x1',x(i)); xh.setAttribute('x2',x(i)); xh.setAttribute('visibility','visible');
+      const a=ACT[i];
+      tip.innerHTML=`<b>Tháng ${i+1}/2026</b><br><span class="k" style="background:var(--c-plan)"></span>Kế hoạch: <b>${fmt(PLAN[i])} tỷ</b><br>`+
+        (a!=null?`<span class="k" style="background:var(--c-act)"></span>Đã giải ngân: <b>${fmt(a)} tỷ</b> (${Math.round(a/PLAN[i]*100)}% KH lũy kế)`:`<span style="opacity:.75">Chưa phát sinh</span>`);
+      tip.hidden=false;
+      const px=Math.min(Math.max(x(i)*k,90),r.width-90);
+      tip.style.left=px+'px'; tip.style.top=(y(Math.max(PLAN[i],a||0))*k)+'px';
+    }
+    svg.querySelectorAll('.hit').forEach(h=>{
+      h.addEventListener('mouseenter',()=>show(+h.dataset.i));
+      h.addEventListener('click',()=>show(+h.dataset.i));
+    });
+    svg.addEventListener('mouseleave',()=>{tip.hidden=true; xh.setAttribute('visibility','hidden');});
+    $('chart-table').insertAdjacentHTML('beforeend','<tr><th>Tháng</th><th>Kế hoạch</th><th>Đã giải ngân</th></tr>'+MONTHS.map((m,i)=>`<tr><td>${m}</td><td>${PLAN[i]}</td><td>${ACT[i]??'—'}</td></tr>`).join(''));
+  })();
+
+  /* ================= 5 nghiệp vụ ================= */
+  const MODS=[
+    {id:'quy-hoach', tab:'Quy hoạch & Đất đai', icon:'i-map', short:'Liên thông dữ liệu quy hoạch Tỉnh – Xã',
+     title:'Công khai, minh bạch dữ liệu quy hoạch, liên thông cấp Tỉnh – Xã',
+     who:['Sở Xây dựng','UBND cấp Xã','Cơ quan phối hợp'],
+     steps:[
+      {k:'t',tag:'Cập nhật cơ sở dữ liệu quy hoạch',who:'Sở chuyên ngành',tech:'Cloud GIS',txt:'Lưu bản đồ ranh giới, tọa độ đất, quy hoạch chung và phân khu làm dữ liệu gốc.'},
+      {k:'g',tag:'Tiếp nhận đề nghị điều chỉnh',who:'UBND cấp Xã',tech:'Lark Form · Base',txt:'Số hóa hồ sơ, tự cấp mã định danh theo dõi xuyên suốt Xã – Sở.'},
+      {k:'g',tag:'Lấy ý kiến cơ quan liên quan',who:'Sở chủ trì',tech:'Lark Approval',txt:'Gửi đồng thời đến các Sở, đếm ngược thời hạn, Lark Bot nhắc trước hạn.',par:['Sở NN&MT','Công an tỉnh','Sở Tài chính']},
+      {k:'t',tag:'Phê duyệt & công bố quy hoạch',who:'Lãnh đạo Sở',tech:'GIS Automation',txt:'Sau phê duyệt, bản đồ dùng chung tự cập nhật. Xã và người dân tra cứu ngay.'}],
+     cta:{h:'Xóa bỏ điểm nghẽn hồ sơ giấy và chậm trễ liên thông đa bên',p:'Trải nghiệm quy trình phê duyệt song song trên Lark Suite kết hợp bản đồ Cloud GIS, dữ liệu quy hoạch thông suốt từ UBND cấp Xã đến Sở chuyên ngành.',
+      btns:[{t:'Đăng ký buổi làm việc và Demo luồng xử lý hồ sơ Xã – Sở',r:'Khảo sát hiện trạng & Demo giải pháp',s:'Khảo sát hiện trạng liên thông Xã – Sở'}]}},
+    {id:'cap-phep', tab:'Cấp phép & TTHC điện tử', icon:'i-file', short:'Rút ngắn thời gian xử lý hồ sơ cấp phép',
+     title:'Rút ngắn thời gian xử lý hồ sơ, chuẩn hóa thành phần kỹ thuật',
+     who:['Bộ phận một cửa','UBND cấp Xã','Sở Xây dựng'],
+     steps:[
+      {k:'g',tag:'Tiếp nhận hồ sơ TTHC',who:'UBND cấp Xã',tech:'Lark Form · Base',txt:'Nhập liệu tại chỗ, đính kèm bản vẽ số, tự cấp mã hồ sơ và kiểm tra checklist thành phần.'},
+      {k:'t',tag:'Kiểm tra hiện trạng, đối chiếu quy hoạch',who:'Công chức địa chính – xây dựng',tech:'GIS · Lark Task',txt:'Nhấp tọa độ thửa đất để đối chiếu quy hoạch, lập biên bản xác minh trên máy tính bảng.'},
+      {k:'t',tag:'Thẩm định hồ sơ, lấy ý kiến liên ngành',who:'Sở Xây dựng',tech:'BIM · Lark Approval',txt:'Quét mô hình kiểm tra mật độ, chiều cao, khoảng lùi; các Sở cho ý kiến song song.',par:['PCCC','Sở NN&MT']},
+      {k:'g',tag:'Cấp giấy phép xây dựng & trả kết quả',who:'Lãnh đạo Sở',tech:'Approval + ký số',txt:'Ký số trên điện thoại, tự thông báo người dân, cập nhật thông tin cấp phép lên bản đồ GIS.'}],
+     cta:{h:'Xóa bỏ điểm nghẽn hồ sơ giấy và chậm trễ liên thông đa bên',p:'Hồ sơ cấp phép đi trên một luồng số từ bộ phận một cửa cấp Xã đến Sở, mọi bên cùng thấy trạng thái và thời hạn.',
+      btns:[{t:'Đăng ký buổi làm việc và Demo luồng xử lý hồ sơ Xã – Sở',r:'Khảo sát hiện trạng & Demo giải pháp',s:'Khảo sát hiện trạng liên thông Xã – Sở'}]}},
+    {id:'tham-dinh', tab:'Thẩm định dự án đầu tư công', icon:'i-search', short:'Kiểm soát sai sót trước khi phê duyệt',
+     title:'Chống lãng phí vốn ngân sách, kiểm soát sai sót kỹ thuật trước khi phê duyệt dự án',
+     who:['Sở chuyên ngành','Hội đồng thẩm định','Chủ đầu tư'],
+     steps:[
+      {k:'t',tag:'Thẩm định thiết kế xây dựng',who:'Cơ quan chuyên môn',tech:'BIM Clash Detection',txt:'Quét xung đột Kiến trúc – Kết cấu – Cơ điện, kiểm tra an toàn kỹ thuật tự động.'},
+      {k:'t',tag:'Thẩm định dự toán',who:'Cơ quan chuyên môn',tech:'BIM 5D',txt:'Kiểm tra khối lượng vật tư từ mô hình 3D, tránh khai khống khối lượng.'},
+      {k:'g',tag:'Họp Hội đồng thẩm định',who:'Hội đồng thẩm định',tech:'Lark Meeting · Base',txt:'Họp trực tuyến, biên bản ghi tự động, danh mục lỗi theo dõi đến khi khắc phục.'},
+      {k:'g',tag:'Phê duyệt dự án / Báo cáo KT-KT',who:'Người có thẩm quyền',tech:'Lark Approval + ký số',txt:'Phê duyệt Báo cáo kết quả thẩm định bằng chữ ký số, lưu vết đầy đủ.'}],
+     cta:{h:'Nâng cao chất lượng thẩm định, loại bỏ sai sót thiết kế ngay từ bước lập dự án',p:'BIM quét xung đột tự động kết hợp Lark Base quản lý danh mục lỗi kỹ thuật tập trung, giúp hội đồng quyết định chính xác, nhanh và minh bạch.',
+      btns:[{t:'Đăng ký tư vấn giải pháp Thẩm định số hóa bằng BIM & Lark',r:'Khảo sát hiện trạng & Demo giải pháp'}]}},
+    {id:'giai-ngan', tab:'Thanh quyết toán & Giải ngân', icon:'i-cash', short:'Đẩy nhanh giải ngân vốn đầu tư công',
+     title:'Giám sát sản lượng thi công thực tế, đẩy nhanh tiến độ giải ngân vốn đầu tư công',
+     who:['Ban QLDA','Tư vấn giám sát','Kho bạc Nhà nước'], level:'Ban QLDA',
+     steps:[
+      {k:'t',tag:'Nghiệm thu khối lượng hoàn thành',who:'Kỹ sư Ban QLDA, TVGS',tech:'Meegle · BIM',txt:'Cập nhật sản lượng theo phân đoạn kèm ảnh hiện trường và định vị GPS.'},
+      {k:'g',tag:'Đối chiếu khối lượng hợp đồng',who:'Phòng Kỹ thuật',tech:'Lark Base · API',txt:'Tự nhân đơn giá hợp đồng ra giá trị thanh toán. Vượt hợp đồng gốc thì khóa quy trình và cảnh báo.'},
+      {k:'g',tag:'Đề nghị thanh toán vốn đầu tư công',who:'Ban QLDA',tech:'Lark Approval + ký số',txt:'Hồ sơ thanh toán chạy liên cấp; bị từ chối thì Lark tự nhắn nhà thầu lý do cần sửa.',chain:['CV Kỹ thuật','TP Kỹ thuật','P. TC-KT','GĐ Ban','Kho bạc']},
+      {k:'g',tag:'Báo cáo giải ngân & quyết toán',who:'Giám đốc Ban',tech:'Lark Dashboard · Drive',txt:'Giải ngân thực tế so với kế hoạch vốn năm; toàn bộ chứng từ lưu theo thư mục dự án.'}],
+     cta:{h:'Đảm bảo tiến độ giải ngân vốn đầu tư công theo kế hoạch, an toàn pháp lý',p:'Kiểm soát từng khối lượng hoàn công trên Meegle/BIM, tự động hóa luồng phê duyệt thanh toán qua Lark Approval, sẵn sàng dữ liệu cho Kiểm toán Nhà nước.',
+      btns:[{t:'Yêu cầu demo giải pháp Giám sát sản lượng & Quản lý dòng vốn',r:'Khảo sát hiện trạng & Demo giải pháp',s:'Giải pháp kiểm soát tiến độ giải ngân Ban QLDA'},
+            {t:'Nhận Mẫu Dashboard Giám sát Đầu tư công cho Lãnh đạo',r:'Mẫu Dashboard giám sát đầu tư công',s:'Giải pháp kiểm soát tiến độ giải ngân Ban QLDA',ghost:true}]}},
+    {id:'hau-kiem', tab:'Hậu kiểm, Thanh tra & Lưu trữ', icon:'i-shield', short:'Kho hồ sơ hoàn công số, lưu vết phê duyệt',
+     title:'Số hóa kho hồ sơ “sống”, sẵn sàng phục vụ thanh tra, hậu kiểm',
+     who:['Thanh tra','Sở chuyên ngành','Ban QLDA'],
+     steps:[
+      {k:'t',tag:'Kiểm tra sau cấp phép',who:'Đoàn kiểm tra',tech:'QR Code · GIS/BIM',txt:'Quét mã định danh công trình, đối chiếu tức thời bản vẽ được duyệt với thực tế.'},
+      {k:'g',tag:'Xử lý vi phạm trật tự xây dựng',who:'Cán bộ kiểm tra',tech:'Lark Form · Chat',txt:'Chụp ảnh, điền checklist; vị trí vi phạm ghim lên bản đồ của Sở, báo ngay lãnh đạo.'},
+      {k:'g',tag:'Giải trình thanh tra, kiểm toán',who:'Đơn vị được kiểm tra',tech:'Audit Trail · Minutes',txt:'Xuất lịch sử phê duyệt không sửa xóa được; họp giải trình có biên bản tự động.'},
+      {k:'g',tag:'Lưu trữ hồ sơ hoàn thành công trình',who:'Bộ phận lưu trữ',tech:'Lark Drive · OCR',txt:'Tìm bằng từ khóa trong tệp scan, phân quyền theo cấp hành chính, chặn tải về tài liệu mật.'}],
+     cta:{h:'Nâng cao năng lực giám sát, bảo vệ an toàn pháp lý cho mọi quyết định phê duyệt',p:'Chuyển kho hồ sơ truyền thống thành hệ thống lưu trữ số bảo mật, tự lưu vết lịch sử duyệt phục vụ giải trình pháp lý.',
+      btns:[{t:'Đăng ký khảo sát nhu cầu Số hóa & Lưu trữ hồ sơ kỹ thuật số',r:'Khảo sát hiện trạng & Demo giải pháp',s:'Số hóa tài liệu lưu trữ'},
+            {t:'Nhận tài liệu Hướng dẫn quy trình Hậu kiểm số liên thông',r:'Tài liệu hướng dẫn quy trình hậu kiểm số',s:'Số hóa tài liệu lưu trữ',ghost:true}]}}
+  ];
+  const mods=$('mods'), panel=$('panel');
+  mods.innerHTML=MODS.map((m,i)=>`<button class="mod" role="tab" id="tab-${m.id}" aria-controls="panel" aria-selected="false" data-id="${m.id}"><span class="n">0${i+1}</span><span class="ico">${ico(m.icon)}</span><b>${m.tab}</b><small>${m.short}</small></button>`).join('');
+
+  function render(id){
+    const m=MODS.find(x=>x.id===id)||MODS[0];
+    mods.querySelectorAll('.mod').forEach(b=>{const on=b.dataset.id===m.id;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1;});
+    panel.setAttribute('aria-labelledby','tab-'+m.id);
+    const steps=m.steps.map((s,i)=>{
+      const extra=s.chain?`<div class="chainx">${s.chain.map(c=>`<span>${c}</span>`).join('<em>→</em>')}</div>`
+        :s.par?`<div class="chainx par"><em>Song song:</em>${s.par.map(c=>`<span>${c}</span>`).join('')}</div>`:'';
+      return `<div class="st4 ${s.k}"><span class="no">BƯỚC ${i+1}</span><span class="tag">${ico('i-stamp')}${s.tag}</span><span class="who4">${s.who}</span><span class="tech4">${ico(s.k==='t'?'i-map':'i-db')}${s.tech}</span><p>${s.txt}</p>${extra}</div>`;
+    }).join('');
+    const btns=m.cta.btns.map(b=>`<a class="btn ${b.ghost?'btn-ghost':'btn-primary'}" href="#lien-he" data-interest="${m.tab}" data-request="${b.r}"${b.s?` data-support="${b.s}"`:''}${m.level?` data-level="${m.level}"`:''}>${b.t}</a>`).join('');
+    panel.innerHTML=`
+      <div class="panel-h"><div><p class="mono" style="color:var(--ink-2);margin-bottom:8px">${m.tab}</p><h3>${m.title}</h3></div>
+        <div class="who">${m.who.map(w=>`<span class="chip">${ico('i-user')}${w}</span>`).join('')}</div></div>
+      <div class="steps4">${steps}</div>
+      <div class="panel-cta"><div><h4>${m.cta.h}</h4><p>${m.cta.p}</p></div><div class="btns">${btns}</div></div>`;
+  }
+
+  const viewed=[]; let lastViewed=null;
+  function view(id){
+    render(id);
+    const t=MODS.find(m=>m.id===id).tab; lastViewed=t; if(!viewed.includes(t)) viewed.push(t);
+  }
+  mods.addEventListener('click',e=>{const b=e.target.closest('.mod'); if(b){view(b.dataset.id); try{history.replaceState(null,'','#'+b.dataset.id)}catch(_){}}});
+  mods.addEventListener('keydown',e=>{
+    if(!['ArrowLeft','ArrowRight'].includes(e.key)) return;
+    const list=[...mods.querySelectorAll('.mod')], i=list.findIndex(b=>b.getAttribute('aria-selected')==='true');
+    const n=list[(i+(e.key==='ArrowRight'?1:-1)+list.length)%list.length]; view(n.dataset.id); n.focus(); e.preventDefault();
+  });
+  const fromHash=()=>{const h=location.hash.slice(1); if(MODS.some(m=>m.id===h)){view(h); $('nghiep-vu').scrollIntoView();}};
+  render('quy-hoach'); fromHash(); window.addEventListener('hashchange',fromHash);
+
+  /* ================= Tự cấu hình gói ================= */
+  const CONFIGS=[
+    {name:'Cấp cơ sở · UBND Xã/Phường', set:['Lark CB','Giám sát Hiện trường']},
+    {name:'Ban QLDA chuyên ngành', set:['Lark NC','QLDA Full']},
+    {name:'Trung tâm điều hành cấp Tỉnh', set:['Lark Admin','QLDA Full','Tư vấn Thiết kế']}
+  ];
+  const bInputs=[...document.querySelectorAll('#tu-cau-hinh input')];
+  const money=tr=>tr.toLocaleString('vi-VN')+' triệu';
+  let builderNote='', builderMatch=null;
+  function build(){
+    const chosen=bInputs.filter(i=>i.checked);
+    const total=chosen.reduce((a,i)=>a+ +i.dataset.price,0);
+    $('b-total').textContent=money(total);
+    $('b-lines').innerHTML=chosen.map(i=>`<li><span>${i.value}</span><b>${money(+i.dataset.price)}</b></li>`).join('');
+    const names=chosen.map(i=>i.value).sort().join('|');
+    builderMatch=CONFIGS.find(c=>c.set.slice().sort().join('|')===names)||null;
+    $('b-match').hidden=!builderMatch;
+    if(builderMatch) $('b-match').textContent=`Trùng với cấu hình đề xuất: ${builderMatch.name}.`;
+    builderNote=`Tự cấu hình: ${chosen.map(i=>i.value).join(' + ')} = ${money(total)}/năm`;
+  }
+  bInputs.forEach(i=>i.addEventListener('change',build)); build();
+
+  /* ================= Form đăng ký: phân loại tự động ================= */
+  const LEAD_API='api/lead';
+  const form=$('lead'), submitBtn=$('submit');
+  const sel={interest:$('f-interest'),request:$('f-request'),package:$('f-package'),level:$('f-level')};
+  let source='Đăng ký khảo sát', manual=false, note='';
+  function setSel(k,val,auto){ const s=sel[k]; if(![...s.options].some(o=>o.value===val)) return; s.value=val; s.closest('.field').classList.toggle('auto',!!auto && val!=='Chưa xác định' && val!=='Chưa chọn'); }
+  function syncBtn(){
+    const r=sel.request.value;
+    submitBtn.textContent = r.startsWith('Khảo sát') ? 'Gửi đăng ký khảo sát' : r.startsWith('Biên bản') ? 'Gửi yêu cầu báo giá' : 'Gửi yêu cầu nhận tài liệu';
+  }
+  Object.values(sel).forEach(s=>s.addEventListener('change',()=>{s.closest('.field').classList.remove('auto'); if(s===sel.interest) manual=true; if(s===sel.request) syncBtn();}));
+
+  document.addEventListener('click',e=>{
+    const a=e.target.closest('a[href="#lien-he"]'); if(!a) return;
+    const ds=a.dataset;
+    if(ds.interest){ setSel('interest',ds.interest,true); manual=false; }
+    else if(!manual) setSel('interest',lastViewed||'Chưa xác định',!!lastViewed);
+    if(ds.request) setSel('request',ds.request,true);
+    if(a.id==='b-cta'){ setSel('package',builderMatch?builderMatch.name:'Tự cấu hình',true); note=builderNote; source='Tự cấu hình báo giá'; }
+    else if(ds.package){ setSel('package',ds.package,true); note=''; source='Báo giá'; }
+    else { note=''; source=ds.interest?'Nghiệp vụ: '+ds.interest:(ds.src||'Đăng ký khảo sát'); }
+    if(ds.level) setSel('level',ds.level,true);
+    if(ds.support){ const c=form.querySelector(`input[name=supports][value="${ds.support}"]`); if(c) c.checked=true; }
+    syncBtn();
+  });
+
+  const rules={
+    org:v=>v.trim().length>=3||'Vui lòng nhập tên cơ quan, đơn vị.',
+    name:v=>v.trim().length>=2||'Vui lòng nhập họ tên.',
+    position:v=>v.trim().length>=2||'Vui lòng nhập chức vụ hoặc bộ phận.',
+    phone:v=>/^(\+84|0)\d{9,10}$/.test(v.replace(/[\s.]/g,''))||'Số điện thoại chưa đúng, ví dụ 0912 345 678.',
+    email:v=>!v.trim()||/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim())||'Email chưa đúng định dạng.'
+  };
+  form.addEventListener('submit',async e=>{
+    e.preventDefault(); let first=null;
+    Object.entries(rules).forEach(([k,fn])=>{
+      const inp=form.elements[k], r=fn(inp.value), bad=r!==true;
+      inp.closest('.field').classList.toggle('invalid',bad); $('e-'+k).textContent=bad?r:'';
+      inp.setAttribute('aria-invalid',bad); if(bad){inp.setAttribute('aria-describedby','e-'+k); if(!first) first=inp;}
+    });
+    if(first){first.focus();return;}
+    const d={
+      org:form.elements.org.value.trim(), name:form.elements.name.value.trim(), position:form.elements.position.value.trim(),
+      phone:form.elements.phone.value.replace(/[\s.]/g,''), email:form.elements.email.value.trim(),
+      level:sel.level.value, interest:sel.interest.value, request:sel.request.value, package:sel.package.value,
+      supports:[...form.querySelectorAll('input[name=supports]:checked')].map(c=>c.value),
+      note, viewed, source, website:form.elements.website.value
+    };
+    const done=$('done'), fail=$('fail');
+    done.hidden=true; fail.hidden=true; submitBtn.disabled=true; submitBtn.textContent='Đang gửi…';
+    try{
+      const r=await fetch(LEAD_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});
+      const j=await r.json().catch(()=>({}));
+      if(!r.ok||!j.ok) throw new Error(j.error||('HTTP '+r.status));
+      $('done-msg').textContent=`Chuyên gia sẽ liên hệ ${d.name} (${d.org}) qua số ${d.phone} để thống nhất lịch làm việc về: ${d.request.toLowerCase()}.`;
+      done.hidden=false; form.reset(); manual=false; note='';
+      form.querySelectorAll('.field.auto').forEach(f=>f.classList.remove('auto'));
+    }catch(err){ fail.hidden=false; }
+    finally{ submitBtn.disabled=false; syncBtn(); }
+  });
+})();
+</script>

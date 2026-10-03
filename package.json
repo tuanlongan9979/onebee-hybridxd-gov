@@ -1,0 +1,13 @@
+{
+  "name": "onebee-hybrid-gov",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Landing page OneBee Hybrid cho cơ quan quản lý nhà nước (nhân bản từ onebee-hybridxd)",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@vercel/blob": "2.8.0"
+  }
+}
